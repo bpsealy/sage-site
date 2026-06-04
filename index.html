@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sage — Hunting & Fishing Intelligence</title>
+<meta name="description" content="Sage learns the conditions behind your best days afield. A hunting and fishing companion that scores upcoming days against your own logged trips — and gets smarter the more you log." />
+
+<link rel="icon" type="image/png" href="/assets/favicon.png" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Sage — Hunting & Fishing Intelligence" />
+<meta property="og:description" content="Score upcoming days against your own logged trips. The pattern engine gets smarter the more you log." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sageoutdoors.app" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --green:       #254117;  /* brand green */
+    --green-deep:  #182c0f;  /* deeper layer for contrast bands / footer */
+    --green-soft:  #2f5320;  /* cards, hover */
+    --white:       #ffffff;
+    --white-dim:   #d7ddd2;  /* muted white for body copy */
+    --white-faint: #9fae97;  /* captions */
+    --black:       #000000;
+    --line: rgba(255,255,255,0.12);
+    --maxw: 1120px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--green);
+    color: var(--white);
+    font-family: "Montserrat", system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Topographic backdrop */
+  .topo { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6; }
+  .topo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .topo path { fill: none; stroke: rgba(255,255,255,0.04); stroke-width: 1; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+
+  /* Logos are single-color brand-green SVGs; force them white on the green site.
+     Works whether the source SVG is green or already white (single-color art). */
+  .brand img, .hero-mark, .closer .mark, .foot .left img { filter: brightness(0) invert(1); }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(10px);
+    background: rgba(37,65,23,0.78);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 70px; }
+  .brand img { height: 34px; width: auto; display: block; }
+  .navlinks { display: flex; align-items: center; gap: 30px; }
+  .navlinks a {
+    color: var(--white-dim); text-decoration: none; font-size: 14px; font-weight: 600;
+    letter-spacing: 0.02em; transition: color 0.2s var(--ease);
+  }
+  .navlinks a:hover { color: var(--white); }
+  .navlinks .cta {
+    color: var(--green); background: var(--white);
+    padding: 10px 20px; border-radius: 100px; font-weight: 700;
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+  .navlinks .cta:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  @media (max-width: 720px) { .navlinks .ghost { display: none; } }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 104px 0 92px; position: relative; }
+  .hero-mark {
+    position: absolute; right: -60px; top: 50%; transform: translateY(-50%);
+    width: min(460px, 42vw); opacity: 0.10; pointer-events: none; z-index: 0;
+  }
+  @media (max-width: 880px) { .hero-mark { right: -120px; width: 360px; opacity: 0.07; } }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--white); border: 1px solid var(--line); border-radius: 100px;
+    padding: 7px 15px; margin-bottom: 28px; background: rgba(0,0,0,0.15);
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--white); }
+
+  h1 {
+    font-family: "Montserrat", sans-serif; font-weight: 800;
+    font-size: clamp(40px, 6.6vw, 74px); line-height: 1.03; letter-spacing: -0.02em;
+    max-width: 17ch; margin-bottom: 26px;
+  }
+  .lede { font-size: clamp(18px, 2.2vw, 22px); color: var(--white-dim); max-width: 52ch; margin-bottom: 38px; font-weight: 500; }
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; }
+
+  /* App Store button (swap href when listing is live) */
+  .appstore {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--white); color: var(--green);
+    text-decoration: none; border-radius: 14px; padding: 13px 22px; font-weight: 700;
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    box-shadow: 0 10px 34px rgba(0,0,0,0.28);
+  }
+  .appstore:hover { transform: translateY(-2px); box-shadow: 0 16px 44px rgba(0,0,0,0.36); }
+  .appstore svg { width: 26px; height: 26px; }
+  .appstore .small { font-size: 11px; font-weight: 600; opacity: 0.72; line-height: 1; }
+  .appstore .big { font-size: 18px; line-height: 1.1; }
+  .appstore .stack { display: flex; flex-direction: column; gap: 2px; }
+  .platform-note { font-size: 14px; color: var(--white-faint); font-weight: 500; }
+
+  /* ---------- Reveal ---------- */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+  .hero .reveal:nth-child(2){ transition-delay:.05s } .hero .reveal:nth-child(3){ transition-delay:.15s }
+  .hero .reveal:nth-child(4){ transition-delay:.25s } .hero .reveal:nth-child(5){ transition-delay:.35s }
+  @media (prefers-reduced-motion: reduce) { .reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} }
+
+  /* ---------- Sections ---------- */
+  section { position: relative; z-index: 1; }
+  .band { padding: 84px 0; border-top: 1px solid var(--line); }
+  .band.deep { background: var(--green-deep); }
+  .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white); opacity: 0.7; margin-bottom: 16px; }
+  .band h2 { font-family:"Montserrat",sans-serif; font-weight: 800; font-size: clamp(28px, 4.4vw, 44px); line-height: 1.1; letter-spacing: -0.015em; max-width: 20ch; margin-bottom: 18px; }
+  .band .sub { color: var(--white-dim); max-width: 56ch; font-size: 18px; font-weight: 500; }
+
+  /* ---------- Features ---------- */
+  .features { display: grid; grid-template-columns: repeat(2,1fr); gap: 1px; margin-top: 52px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  @media (max-width: 760px){ .features{ grid-template-columns: 1fr; } }
+  .feature { background: var(--green); padding: 34px 32px; transition: background 0.25s var(--ease); }
+  .band.deep .feature { background: var(--green-deep); }
+  .feature:hover { background: var(--green-soft); }
+  .feature .ico { width: 40px; height: 40px; margin-bottom: 18px; color: var(--white); }
+  .feature h3 { font-weight: 700; font-size: 21px; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .feature p { color: var(--white-dim); font-size: 16px; font-weight: 500; }
+
+  /* ---------- Pattern Match spotlight ---------- */
+  .spotlight { background: var(--green-soft); border: 1px solid var(--line); border-radius: 22px; padding: clamp(36px, 6vw, 64px); }
+  .spotlight h2 { max-width: 18ch; }
+  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top: 44px; }
+  @media (max-width: 760px){ .steps{ grid-template-columns: 1fr; gap: 22px; } }
+  .step .num { font-weight: 800; font-size: 14px; color: var(--green); background: var(--white); width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 14px; }
+  .step h4 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .step p { color: var(--white-dim); font-size: 15px; font-weight: 500; }
+
+  /* ---------- Closer ---------- */
+  .closer { text-align: center; padding: 100px 0; }
+  .closer .mark { width: 76px; margin: 0 auto 28px; display: block; opacity: 0.95; }
+  .closer h2 { margin: 0 auto 30px; }
+  .closer .cta-row { justify-content: center; }
+
+  /* ---------- Footer ---------- */
+  footer { border-top: 1px solid var(--line); padding: 46px 0; background: var(--green-deep); }
+  .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+  .foot .left { display: flex; align-items: center; gap: 16px; }
+  .foot .left img { height: 26px; }
+  .foot .copy { color: var(--white-faint); font-size: 14px; font-weight: 500; }
+  .foot-links { display: flex; gap: 26px; }
+  .foot-links a { color: var(--white-dim); text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.2s var(--ease); }
+  .foot-links a:hover { color: var(--white); }
+</style>
+</head>
+<body>
+
+<div class="topo" aria-hidden="true">
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <path d="M-50,200 C200,120 400,260 650,180 C880,110 1050,230 1250,160" />
+    <path d="M-50,260 C200,190 400,320 650,250 C880,185 1050,300 1250,235" />
+    <path d="M-50,330 C220,270 420,390 660,320 C900,260 1060,370 1250,310" />
+    <path d="M-50,420 C240,360 440,470 680,400 C920,340 1080,450 1250,395" />
+    <path d="M-50,520 C260,460 460,560 700,490 C940,430 1100,540 1250,490" />
+    <path d="M-50,620 C280,560 480,650 720,585 C960,525 1120,630 1250,585" />
+    <path d="M-50,710 C300,660 500,740 740,680 C980,625 1140,720 1250,680" />
+  </svg>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="brand" aria-label="Sage home">
+      <img src="/assets/sage-lockup.svg" alt="Sage — Hunting & Fishing Intelligence" />
+    </a>
+    <nav class="navlinks">
+      <a class="ghost" href="#features">Features</a>
+      <a class="ghost" href="#pattern">Pattern Match</a>
+      <!-- TODO: replace href with your live App Store listing URL once released -->
+      <a class="cta" href="#download">Download</a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <img class="hero-mark" src="/assets/sage-mark.svg" alt="" aria-hidden="true" />
+    <div class="wrap">
+      <span class="eyebrow reveal"><span class="dot"></span> For hunters &amp; anglers · iPhone</span>
+      <h1 class="reveal">Read the conditions behind your best days afield.</h1>
+      <p class="lede reveal">Sage scores upcoming days against your own logged trips and sightings — weather, pressure, wind, moon, solunar — and gets sharper the more you log. Your field notes, turned into a forecast only you have.</p>
+      <div class="cta-row reveal" id="download">
+        <!-- TODO: point href at the live App Store URL when the listing goes live -->
+        <a class="appstore" href="#">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.36 1.43c.04 1.06-.36 2.1-1.04 2.87-.7.79-1.86 1.4-2.98 1.31-.05-1.04.39-2.09 1.05-2.83.72-.81 1.94-1.41 2.97-1.35zM20.5 17.06c-.5 1.14-.74 1.65-1.38 2.66-.9 1.41-2.16 3.17-3.73 3.18-1.4.02-1.76-.91-3.65-.9-1.9.01-2.29.92-3.69.9-1.57-.01-2.77-1.6-3.67-3.01C1.84 16.04 1.58 11.3 3.13 8.78c1.1-1.8 2.84-2.85 4.47-2.85 1.66 0 2.71.91 4.08.91 1.34 0 2.15-.91 4.08-.91 1.46 0 3 .79 4.1 2.16-3.6 1.97-3.02 7.11.54 8.97z"/></svg>
+          <span class="stack"><span class="small">Download on the</span><span class="big">App Store</span></span>
+        </a>
+        <span class="platform-note">Sage Pro · 1 month free, then $14.99/yr</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="band deep" id="features">
+    <div class="wrap">
+      <p class="kicker reveal">What's inside</p>
+      <h2 class="reveal">A field companion built around your own data.</h2>
+      <p class="sub reveal">No generic "good fishing weather" guesses. Sage learns from the trips you actually log, then applies that to the days ahead.</p>
+
+      <div class="features">
+        <div class="feature reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <h3>Pattern Match</h3>
+          <p>A rating-weighted scoring engine correlates your logged trips against the conditions that produced them, scoring upcoming days for the spots you actually hunt and fish.</p>
+        </div>
+        <div class="feature reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-6 4 4 5-7 4 5"/><path d="M3 4v16h18"/></svg>
+          <h3>7-Day Hunt &amp; Fish Forecasts</h3>
+          <p>Scored outlooks per spot and per target buck — pressure trends, wind, moon phase, solunar overlap and cold fronts, read together instead of one tile at a time.</p>
+        </div>
+        <div class="feature reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+          <h3>A Logbook That Pays You Back</h3>
+          <p>Log trips, catches and sightings with photos and conditions. Every entry sharpens the engine — the logbook isn't a diary, it's training data for your forecast.</p>
+        </div>
+        <div class="feature reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>
+          <h3>Share With Your Crew</h3>
+          <p>Send a logged trip to a hunting partner and keep a shared picture of a spot across devices, synced privately through your iCloud.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PATTERN MATCH SPOTLIGHT -->
+  <section class="band" id="pattern">
+    <div class="wrap">
+      <div class="spotlight reveal">
+        <p class="kicker">The difference</p>
+        <h2>It gets smarter every time you log a trip.</h2>
+        <p class="sub">Most apps show you the weather. Sage learns which weather worked for you, at your spots — then ranks the days ahead accordingly.</p>
+        <div class="steps">
+          <div class="step"><div class="num">1</div><h4>Log what happened</h4><p>Record a trip, a catch, or a sighting. Sage captures the conditions automatically.</p></div>
+          <div class="step"><div class="num">2</div><h4>Sage finds the pattern</h4><p>The engine weights your best days and learns the conditions behind them, spot by spot.</p></div>
+          <div class="step"><div class="num">3</div><h4>Score the days ahead</h4><p>Upcoming days are matched against that pattern, so you know when it's worth the trip.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSER -->
+  <section class="closer">
+    <div class="wrap">
+      <img class="mark reveal" src="/assets/sage-mark.svg" alt="Sage mark" />
+      <p class="kicker reveal">Get Sage</p>
+      <h2 class="band-h2 reveal" style="font-family:Montserrat;font-weight:800;font-size:clamp(28px,4.4vw,44px);line-height:1.1;letter-spacing:-0.015em;max-width:22ch;">Your next great day is in your last hundred.</h2>
+      <div class="cta-row reveal">
+        <!-- TODO: point href at the live App Store URL when the listing goes live -->
+        <a class="appstore" href="#">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.36 1.43c.04 1.06-.36 2.1-1.04 2.87-.7.79-1.86 1.4-2.98 1.31-.05-1.04.39-2.09 1.05-2.83.72-.81 1.94-1.41 2.97-1.35zM20.5 17.06c-.5 1.14-.74 1.65-1.38 2.66-.9 1.41-2.16 3.17-3.73 3.18-1.4.02-1.76-.91-3.65-.9-1.9.01-2.29.92-3.69.9-1.57-.01-2.77-1.6-3.67-3.01C1.84 16.04 1.58 11.3 3.13 8.78c1.1-1.8 2.84-2.85 4.47-2.85 1.66 0 2.71.91 4.08.91 1.34 0 2.15-.91 4.08-.91 1.46 0 3 .79 4.1 2.16-3.6 1.97-3.02 7.11.54 8.97z"/></svg>
+          <span class="stack"><span class="small">Download on the</span><span class="big">App Store</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="left">
+      <img src="/assets/sage-wordmark.svg" alt="Sage" />
+      <span class="copy">&copy; 2026 Sage Outdoors</span>
+    </div>
+    <nav class="foot-links">
+      <a href="/privacy">Privacy</a>
+      <!-- Terms of Use = Apple's standard EULA (the one your IAP uses) -->
+      <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Terms</a>
+      <a href="mailto:support@sageoutdoors.app">Support</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.hero .reveal').forEach((el) => el.classList.add('in'));
+  });
+</script>
+
+</body>
+</html>
