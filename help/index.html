@@ -4,152 +4,164 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sage Help &amp; How-To</title>
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  @font-face {
-    font-family: 'Montserrat';
-    src: local('Montserrat');
-    font-weight: 400;
-  }
   :root{
-    --bg: #05070a;
-    --surface: #10160f;
-    --surface-2: #0c110d;
-    --cream: #F0EBD8;
-    --cream-dim: rgba(240,235,216,0.62);
-    --cream-faint: rgba(240,235,216,0.38);
-    --amber: #F3A93C;
-    --rule: rgba(240,235,216,0.12);
-    --rule-strong: rgba(240,235,216,0.22);
+    --green: #254117; --green-deep: #182c0f; --green-soft: #2f5320;
+    --white: #ffffff; --white-dim: #d7ddd2; --white-faint: #9fae97;
+    --line: rgba(255,255,255,0.12);
     --maxw: 700px;
+    --ease: cubic-bezier(0.22,1,0.36,1);
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
     margin:0;
-    background:var(--bg);
-    color:var(--cream);
-    font-family:'Montserrat',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--green);
+    color:var(--white);
+    font-family:"Montserrat",system-ui,sans-serif;
     font-weight:400;
-    line-height:1.55;
+    line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
-  a{color:var(--amber);text-decoration:none;}
-  a:hover{text-decoration:underline;}
+  a{color:var(--white);text-decoration:underline; text-underline-offset:2px;}
+  a:hover{color:var(--white-dim);}
+
+  .bg-mark{
+    position:fixed; right:-60px; top:120px; width:min(460px,42vw);
+    opacity:0.05; pointer-events:none; z-index:0;
+    filter:brightness(0) invert(1);
+  }
+  @media (max-width:900px){ .bg-mark{display:none;} }
 
   header.topbar{
     position:sticky; top:0; z-index:20;
-    background:rgba(5,7,10,0.92);
+    background:rgba(37,65,23,0.82);
     backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--rule);
+    border-bottom:1px solid var(--line);
   }
   .topbar-inner{
     max-width:960px; margin:0 auto;
     display:flex; align-items:center; gap:14px;
-    padding:14px 20px;
+    padding:16px 28px;
   }
-  .topbar-inner img{height:26px; width:auto; display:block;}
-  .topbar-inner .wordmark{
-    font-weight:800; letter-spacing:3px; font-size:16px; color:var(--cream);
-  }
-  .topbar-inner .divider{width:1px;height:18px;background:var(--rule-strong);}
+  .topbar-inner img{height:30px; width:auto; display:block; filter:brightness(0) invert(1);}
+  .topbar-inner .divider{width:1px;height:18px;background:var(--line);}
   .topbar-inner .pagelabel{
-    font-size:14px; color:var(--cream-dim); font-weight:500;
+    font-size:14px; color:var(--white-dim); font-weight:600;
   }
 
   nav.sectionnav{
-    max-width:960px; margin:0 auto;
-    display:flex; gap:6px; overflow-x:auto;
-    padding:0 20px 12px 20px;
+    max-width:960px; margin:0 auto; position:relative; z-index:1;
+    display:flex; gap:8px; overflow-x:auto;
+    padding:0 28px 14px 28px;
     -ms-overflow-style:none; scrollbar-width:none;
   }
   nav.sectionnav::-webkit-scrollbar{display:none;}
   nav.sectionnav a{
     flex:0 0 auto;
-    font-size:13.5px; font-weight:600; color:var(--cream-dim);
+    font-size:13.5px; font-weight:600; color:var(--white-dim);
+    text-decoration:none;
     background:transparent;
-    border:1px solid var(--rule);
-    padding:7px 13px; border-radius:20px;
+    border:1px solid var(--line);
+    padding:7px 14px; border-radius:100px;
     white-space:nowrap;
+    transition:color 0.2s var(--ease), background 0.2s var(--ease);
   }
+  nav.sectionnav a:hover{color:var(--white);}
   nav.sectionnav a.current{
-    color:var(--bg); background:var(--amber); border-color:var(--amber);
+    color:var(--green); background:var(--white); border-color:var(--white); font-weight:700;
   }
 
-  main{max-width:var(--maxw); margin:0 auto; padding:36px 20px 100px;}
+  main{max-width:var(--maxw); margin:0 auto; padding:48px 28px 100px; position:relative; z-index:1;}
 
+  .intro .eyebrow{
+    display:inline-flex; align-items:center; gap:9px;
+    font-size:12px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--white); border:1px solid var(--line); border-radius:100px;
+    padding:7px 15px; margin-bottom:22px; background:rgba(0,0,0,0.15);
+  }
   .intro h1{
-    font-size:30px; font-weight:800; letter-spacing:-0.3px;
-    margin:0 0 14px;
+    font-size:clamp(30px,4vw,38px); font-weight:800; letter-spacing:-0.02em;
+    margin:0 0 16px; max-width:16ch;
   }
   .intro p{
-    font-size:16px; color:var(--cream-dim); margin:0 0 10px; max-width:62ch;
+    font-size:16px; color:var(--white-dim); margin:0 0 10px; max-width:62ch; font-weight:500;
   }
-  .intro{margin-bottom:44px; padding-bottom:36px; border-bottom:1px solid var(--rule);}
+  .intro{margin-bottom:48px; padding-bottom:40px; border-bottom:1px solid var(--line);}
 
-  section.doc-section{margin-bottom:64px;}
+  section.doc-section{margin-bottom:68px;}
   section.doc-section h2{
-    font-size:23px; font-weight:800; margin:0 0 8px;
-    scroll-margin-top:110px;
+    font-size:26px; font-weight:800; margin:0 0 10px; letter-spacing:-0.01em;
+    scroll-margin-top:120px;
   }
   section.doc-section > p.section-dek{
-    font-size:15.5px; color:var(--cream-dim); margin:0 0 30px; max-width:60ch;
+    font-size:15.5px; color:var(--white-dim); margin:0 0 32px; max-width:60ch; font-weight:500;
   }
 
   .step{
-    padding:26px 0; border-top:1px solid var(--rule);
+    padding:28px 0; border-top:1px solid var(--line);
   }
   .step:first-of-type{border-top:none; padding-top:0;}
   .step-head{
-    display:flex; align-items:baseline; gap:12px; margin-bottom:8px;
+    display:flex; align-items:center; gap:14px; margin-bottom:10px;
   }
   .step-num{
-    font-weight:800; font-size:14px; color:var(--amber);
-    flex:0 0 auto;
+    font-weight:800; font-size:13px; color:var(--green);
+    background:var(--white); width:26px; height:26px; border-radius:50%;
+    display:grid; place-items:center; flex:0 0 auto; margin-right:14px;
   }
   .step-title{
-    font-weight:700; font-size:17px; color:var(--cream);
+    font-weight:700; font-size:17px; color:var(--white);
   }
   .step p{
-    font-size:15px; color:var(--cream-dim); margin:0 0 4px 26px; max-width:56ch;
+    font-size:15px; color:var(--white-dim); margin:0 0 4px 40px; max-width:56ch;
   }
   .step ul{
-    margin:8px 0 4px 26px; padding-left:18px; color:var(--cream-dim); font-size:15px;
+    margin:8px 0 4px 40px; padding-left:18px; color:var(--white-dim); font-size:15px;
   }
   .step ul li{margin-bottom:4px;}
   .step .tip{
-    margin:12px 0 0 26px; font-size:13.5px; color:var(--cream-faint);
-    border-left:2px solid var(--rule-strong); padding-left:10px;
+    margin:14px 0 0 40px; font-size:13.5px; color:var(--white-faint);
+    border-left:2px solid var(--line); padding-left:12px;
   }
   .shot{
-    margin:16px 0 0 26px;
+    margin:18px 0 0 40px;
     max-width:280px;
   }
   .shot img{
     width:100%; display:block; border-radius:14px;
-    border:1px solid var(--rule-strong);
+    border:1px solid var(--line);
+    box-shadow:0 14px 34px rgba(0,0,0,0.28);
   }
   .shot-caption{
-    font-size:12.5px; color:var(--cream-faint); margin-top:6px;
+    font-size:12.5px; color:var(--white-faint); margin-top:8px;
   }
   .shot-row{
-    display:flex; gap:16px; margin:16px 0 0 26px; flex-wrap:wrap;
+    display:flex; gap:18px; margin:18px 0 0 40px; flex-wrap:wrap;
   }
   .shot-row .shot{margin:0; max-width:220px;}
 
   footer{
-    max-width:960px; margin:0 auto; padding:30px 20px 60px;
-    border-top:1px solid var(--rule);
-    font-size:13px; color:var(--cream-faint);
+    max-width:960px; margin:0 auto; padding:34px 28px 60px; position:relative; z-index:1;
+    border-top:1px solid var(--line);
+    font-size:13px; color:var(--white-faint);
   }
-  footer a{color:var(--cream-dim);}
+  footer a{color:var(--white-dim);}
 </style>
 </head>
 <body>
 
+<img class="bg-mark" src="../assets/sage-mark.svg" alt="">
+
 <header class="topbar">
   <div class="topbar-inner">
-    <img src="../assets/brand/sage-mark-amber.svg" alt="Sage">
-    <span class="wordmark">SAGE</span>
+    <img src="../assets/sage-lockup.svg" alt="Sage">
     <span class="divider"></span>
     <span class="pagelabel">Help &amp; How-To</span>
   </div>
@@ -170,6 +182,7 @@
 <main>
 
   <div class="intro">
+    <span class="eyebrow"><span style="width:6px;height:6px;border-radius:50%;background:var(--white);display:inline-block;"></span>HELP &amp; HOW-TO</span>
     <h1>How Sage works</h1>
     <p>Sage learns from every hunt and fish you log, then scores your upcoming days against that history so you know when your spots are actually worth a sit. This page walks through every part of the app in detail, with real screens from Sage alongside each step.</p>
     <p>Use the bar above to jump to a section, or just scroll — everything follows the order you'd naturally set the app up in.</p>
