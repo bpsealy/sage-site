@@ -67,10 +67,28 @@
   }
   nav.sectionnav::-webkit-scrollbar{display:none;}
   .nav-fade{
-    position:absolute; top:0; right:0; bottom:14px; width:44px;
-    background:linear-gradient(to right, transparent, var(--green) 70%);
+    position:absolute; top:0; bottom:14px; width:52px;
     pointer-events:none; z-index:2;
   }
+  .nav-fade-right{
+    right:0;
+    background:linear-gradient(to right, transparent, var(--green) 70%);
+  }
+  .nav-fade-left{
+    left:0;
+    background:linear-gradient(to left, transparent, var(--green) 70%);
+  }
+  .nav-arrow{
+    position:absolute; top:0; bottom:14px; width:28px;
+    display:flex; align-items:center; justify-content:center;
+    background:none; border:none; padding:0; margin:0;
+    color:var(--white); cursor:pointer; z-index:3;
+    opacity:0.8; transition:opacity 0.2s var(--ease);
+  }
+  .nav-arrow:hover{opacity:1;}
+  .nav-arrow svg{width:15px; height:15px; display:block;}
+  .nav-arrow-left{left:2px;}
+  .nav-arrow-right{right:2px;}
   nav.sectionnav a{
     flex:0 0 auto;
     font-size:13.5px; font-weight:600; color:var(--white-dim);
@@ -189,7 +207,14 @@
       <a href="#onx">Import from onX</a>
       <a href="#pro">Pro &amp; Subscription</a>
     </nav>
-    <div class="nav-fade"></div>
+    <div class="nav-fade nav-fade-left" id="navFadeLeft"></div>
+    <div class="nav-fade nav-fade-right" id="navFadeRight"></div>
+    <button type="button" class="nav-arrow nav-arrow-left" id="navArrowLeft" aria-label="Scroll navigation left">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button type="button" class="nav-arrow nav-arrow-right" id="navArrowRight" aria-label="Scroll navigation right">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
   </div>
 </header>
 
@@ -1306,6 +1331,28 @@
   }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
 
   sections.forEach(s => observer.observe(s));
+
+  const navEl = document.querySelector('nav.sectionnav');
+  const arrowLeft = document.getElementById('navArrowLeft');
+  const arrowRight = document.getElementById('navArrowRight');
+  const fadeLeft = document.getElementById('navFadeLeft');
+  const fadeRight = document.getElementById('navFadeRight');
+
+  function updateNavEdges() {
+    const maxScroll = navEl.scrollWidth - navEl.clientWidth;
+    const atStart = navEl.scrollLeft <= 4;
+    const atEnd = navEl.scrollLeft >= maxScroll - 4;
+    arrowLeft.style.display = atStart ? 'none' : 'flex';
+    fadeLeft.style.display = atStart ? 'none' : 'block';
+    arrowRight.style.display = atEnd ? 'none' : 'flex';
+    fadeRight.style.display = atEnd ? 'none' : 'block';
+  }
+
+  arrowLeft.addEventListener('click', () => navEl.scrollBy({ left: -220, behavior: 'smooth' }));
+  arrowRight.addEventListener('click', () => navEl.scrollBy({ left: 220, behavior: 'smooth' }));
+  navEl.addEventListener('scroll', updateNavEdges);
+  window.addEventListener('resize', updateNavEdges);
+  updateNavEdges();
 </script>
 
 </body>
