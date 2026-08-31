@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sage Help &amp; How-To</title>
+<style>
+  @font-face {
+    font-family: 'Montserrat';
+    src: local('Montserrat');
+    font-weight: 400;
+  }
+  :root{
+    --bg: #05070a;
+    --surface: #10160f;
+    --surface-2: #0c110d;
+    --cream: #F0EBD8;
+    --cream-dim: rgba(240,235,216,0.62);
+    --cream-faint: rgba(240,235,216,0.38);
+    --amber: #F3A93C;
+    --rule: rgba(240,235,216,0.12);
+    --rule-strong: rgba(240,235,216,0.22);
+    --maxw: 700px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'Montserrat',-apple-system,BlinkMacSystemFont,sans-serif;
+    font-weight:400;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--amber);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  header.topbar{
+    position:sticky; top:0; z-index:20;
+    background:rgba(5,7,10,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--rule);
+  }
+  .topbar-inner{
+    max-width:960px; margin:0 auto;
+    display:flex; align-items:center; gap:14px;
+    padding:14px 20px;
+  }
+  .topbar-inner img{height:26px; width:auto; display:block;}
+  .topbar-inner .wordmark{
+    font-weight:800; letter-spacing:3px; font-size:16px; color:var(--cream);
+  }
+  .topbar-inner .divider{width:1px;height:18px;background:var(--rule-strong);}
+  .topbar-inner .pagelabel{
+    font-size:14px; color:var(--cream-dim); font-weight:500;
+  }
+
+  nav.sectionnav{
+    max-width:960px; margin:0 auto;
+    display:flex; gap:6px; overflow-x:auto;
+    padding:0 20px 12px 20px;
+    -ms-overflow-style:none; scrollbar-width:none;
+  }
+  nav.sectionnav::-webkit-scrollbar{display:none;}
+  nav.sectionnav a{
+    flex:0 0 auto;
+    font-size:13.5px; font-weight:600; color:var(--cream-dim);
+    background:transparent;
+    border:1px solid var(--rule);
+    padding:7px 13px; border-radius:20px;
+    white-space:nowrap;
+  }
+  nav.sectionnav a.current{
+    color:var(--bg); background:var(--amber); border-color:var(--amber);
+  }
+
+  main{max-width:var(--maxw); margin:0 auto; padding:36px 20px 100px;}
+
+  .intro h1{
+    font-size:30px; font-weight:800; letter-spacing:-0.3px;
+    margin:0 0 14px;
+  }
+  .intro p{
+    font-size:16px; color:var(--cream-dim); margin:0 0 10px; max-width:62ch;
+  }
+  .intro{margin-bottom:44px; padding-bottom:36px; border-bottom:1px solid var(--rule);}
+
+  section.doc-section{margin-bottom:64px;}
+  section.doc-section h2{
+    font-size:23px; font-weight:800; margin:0 0 8px;
+    scroll-margin-top:110px;
+  }
+  section.doc-section > p.section-dek{
+    font-size:15.5px; color:var(--cream-dim); margin:0 0 30px; max-width:60ch;
+  }
+
+  .step{
+    padding:26px 0; border-top:1px solid var(--rule);
+  }
+  .step:first-of-type{border-top:none; padding-top:0;}
+  .step-head{
+    display:flex; align-items:baseline; gap:12px; margin-bottom:8px;
+  }
+  .step-num{
+    font-weight:800; font-size:14px; color:var(--amber);
+    flex:0 0 auto;
+  }
+  .step-title{
+    font-weight:700; font-size:17px; color:var(--cream);
+  }
+  .step p{
+    font-size:15px; color:var(--cream-dim); margin:0 0 4px 26px; max-width:56ch;
+  }
+  .step ul{
+    margin:8px 0 4px 26px; padding-left:18px; color:var(--cream-dim); font-size:15px;
+  }
+  .step ul li{margin-bottom:4px;}
+  .step .tip{
+    margin:12px 0 0 26px; font-size:13.5px; color:var(--cream-faint);
+    border-left:2px solid var(--rule-strong); padding-left:10px;
+  }
+  .shot{
+    margin:16px 0 0 26px;
+    max-width:280px;
+  }
+  .shot img{
+    width:100%; display:block; border-radius:14px;
+    border:1px solid var(--rule-strong);
+  }
+  .shot-caption{
+    font-size:12.5px; color:var(--cream-faint); margin-top:6px;
+  }
+  .shot-row{
+    display:flex; gap:16px; margin:16px 0 0 26px; flex-wrap:wrap;
+  }
+  .shot-row .shot{margin:0; max-width:220px;}
+
+  footer{
+    max-width:960px; margin:0 auto; padding:30px 20px 60px;
+    border-top:1px solid var(--rule);
+    font-size:13px; color:var(--cream-faint);
+  }
+  footer a{color:var(--cream-dim);}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <img src="../assets/brand/sage-mark-amber.svg" alt="Sage">
+    <span class="wordmark">SAGE</span>
+    <span class="divider"></span>
+    <span class="pagelabel">Help &amp; How-To</span>
+  </div>
+  <nav class="sectionnav">
+    <a href="#core" class="">The Core of Sage</a>
+    <a href="#spots-properties" class="current">Spots &amp; Properties</a>
+    <a href="#target-buck">Target Buck</a>
+    <a href="#trail-cam">Trail Cam</a>
+    <a href="#camp">Camp</a>
+    <a href="#logging-recap">Logging &amp; Recap</a>
+    <a href="#fishing">Fishing</a>
+    <a href="#weather">Weather &amp; Conditions</a>
+    <a href="#onx">Import from onX</a>
+    <a href="#pro">Pro &amp; Subscription</a>
+  </nav>
+</header>
+
+<main>
+
+  <div class="intro">
+    <h1>How Sage works</h1>
+    <p>Sage learns from every hunt and fish you log, then scores your upcoming days against that history so you know when your spots are actually worth a sit. This page walks through every part of the app in detail, with real screens from Sage alongside each step.</p>
+    <p>Use the bar above to jump to a section, or just scroll — everything follows the order you'd naturally set the app up in.</p>
+  </div>
+
+  <section class="doc-section" id="spots-properties">
+    <h2>Spots &amp; Properties</h2>
+    <p class="section-dek">Properties are the land you hunt — a lease, a family farm, public ground. Spots are the individual stands, blinds, or waypoints inside that land. Every spot keeps its own history, its own preferred wind, and its own score.</p>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <span class="step-title">Open Spots &amp; Properties</span>
+      </div>
+      <p>From the Hunting tab, tap the pin icon in the top right to open the map, or use the gear icon next to it for settings. Spots &amp; Properties lives under the map view's toolbar — it lists every property you've created, any Camps you belong to, and every active spot, with an archived section tucked below.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/spots-properties-list.jpg" alt="Spots and Properties list showing Clay's Camp and Home under Properties, Sealy Camp TF under Camps, and Uncle Mark's Camp under Active Spots">
+        <div class="shot-caption">The Spots &amp; Properties list — Properties, Camps, and Active Spots each get their own section.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <span class="step-title">Add a spot or a property</span>
+      </div>
+      <p>Tap the <strong>+</strong> in the top right. You'll get three choices: <strong>Add spot</strong> to drop a new pin, <strong>New property</strong> to create a piece of land to organize spots under, or <strong>New camp</strong> to start a shared workspace (covered in the Camp section).</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/spots-properties-menu.jpg" alt="The add menu with Add spot, New property, and New camp options">
+        <div class="shot-caption">The + menu — pick the one that matches what you're setting up.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <span class="step-title">Create a property</span>
+      </div>
+      <p>Give it a name (your lease name, "Home," a family farm), then set its location on the map. A property's location is pinned once and stays static — every spot inside that property shares this one location for weather and wind, so pin it at the center of the land, not any one stand.</p>
+      <p>If you've already got spots sitting around ungrouped, you can check them off right here under <strong>Add existing spots</strong> to fold them into the new property immediately.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/new-property.jpg" alt="New property form with name field, Set on map location, and a checklist of existing spots to add">
+        <div class="shot-caption">Creating a property — name it, pin its location, and optionally sweep in existing spots.</div>
+      </div>
+      <div class="tip">A property's pinned location drives the weather and wind shown for every spot inside it, so accuracy here matters more than it looks like it would.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <span class="step-title">Create a spot</span>
+      </div>
+      <p>Choose <strong>Add spot</strong>, name it, and pick a stand type — Box, Ladder, Ground Blind, Climber, Lock-On, Tripod, Food Plot, or Natural. Further down, set the habitat details that actually apply: cover type, water features, terrain, food and attractant sources, and structure or edge features like a funnel or fence line. None of it is required, but the more you fill in, the more Sage has to work with later.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/spots-properties/new-spot-top.jpg" alt="New Hunting Spot form showing name field, stand type options, and optimal wind directions">
+          <div class="shot-caption">Name and stand type at the top of the form.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/spots-properties/new-spot-habitat-map.jpg" alt="New Hunting Spot form scrolled to habitat cover, water, terrain, food, and structure tags with a location map">
+          <div class="shot-caption">Habitat tags and the location picker further down.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">5</span>
+        <span class="step-title">Set the spot's location</span>
+      </div>
+      <p>Scroll to the map at the bottom of the New Spot form. Tap <strong>Use current</strong> to drop the pin where you're standing, pick <strong>From saved</strong> to reuse a previously saved location, or tap the map itself to open the full-screen location picker and drag the pin to the exact spot.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/set-location-map.jpg" alt="Full screen Set Location map with a draggable pin and coordinates shown">
+        <div class="shot-caption">The full-screen location picker — pan the map until the pin sits exactly where you want it, then Done.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">6</span>
+        <span class="step-title">Set the spot's optimal wind</span>
+      </div>
+      <p>Under <strong>Optimal Wind (From)</strong>, tap every compass direction this stand hunts well in. This is separate from live wind data — it's you telling Sage which winds actually work for this stand's setup, so the app can flag when today's forecast wind lines up.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/edit-spot.jpg" alt="Edit Spot form showing the Optimal Wind grid with N selected and a Property row set to Not assigned">
+        <div class="shot-caption">The wind grid on the Edit Spot screen — N is selected here, and Selected/Clear tracks your picks.</div>
+      </div>
+      <div class="tip">You can select more than one direction if a stand hunts well from several winds. Tap Clear to start over.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">7</span>
+        <span class="step-title">Assign a spot to a property</span>
+      </div>
+      <p>On the Edit Spot screen, the <strong>Property</strong> row shows the spot's current assignment — "Not assigned" if it's still ungrouped. Tap <strong>Assign</strong> to open the property picker: choose an existing property, tap <strong>Ungrouped</strong> to remove it from all properties, or tap <strong>Create new property</strong> to build one on the spot without leaving this screen.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/move-to-property.jpg" alt="Move to property sheet listing Ungrouped, Clay's Camp, and Home, with a Create new property option">
+        <div class="shot-caption">The property picker — Ungrouped is always available if a spot doesn't belong under any property.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">8</span>
+        <span class="step-title">Edit an existing spot</span>
+      </div>
+      <p>Open any spot's detail page and tap the pencil icon top right. Everything set at creation — name, stand type, optimal wind, property, camera assignment, notes, and every habitat tag — is editable here, and Save writes the changes back immediately.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">9</span>
+        <span class="step-title">See a spot's full history</span>
+      </div>
+      <p>Every spot's detail page shows today's score, its best window, and why — a wind cone compass shows the live wind against the stand's optimal directions, and tags like <strong>time of day</strong> or <strong>temperature</strong> show which factors are matching in your favor. Below that, log counts for the spot break out into three tabs: <strong>Sightings</strong>, <strong>Logs</strong>, and <strong>Bucks</strong>, each scrollable in place.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/spots-properties/spot-detail-overview.jpg" alt="Spot detail overview with score, off-pattern flag, wind cone compass, and stat counts">
+          <div class="shot-caption">Today's score and why, at the top of every spot.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/spots-properties/spot-detail-logs.jpg" alt="Spot detail Logs tab listing individual hunt entries with star ratings">
+          <div class="shot-caption">The Logs tab — every hunt logged at this spot.</div>
+        </div>
+      </div>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/spots-properties/spot-detail-sightings.jpg" alt="Spot detail Sightings tab listing individual buck sightings by date">
+          <div class="shot-caption">The Sightings tab — every buck seen here, and when.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/spots-properties/spot-detail-bucks.jpg" alt="Spot detail Bucks tab listing named target bucks tied to this spot">
+          <div class="shot-caption">The Bucks tab — target bucks associated with this spot.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">10</span>
+        <span class="step-title">Archive a spot</span>
+      </div>
+      <p>From the Hunting list, swipe left on a spot and tap <strong>Archive Spot</strong>. Archiving keeps the spot's history intact but pulls it out of active scoring and off the map — use it for a stand you've pulled or a lease you've dropped, not for one you're just not hunting this week.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/archive-spot.jpg" alt="Swipe action on a spot row revealing the red Archive Spot button">
+        <div class="shot-caption">Swipe left on any spot in the list to archive it.</div>
+      </div>
+      <div class="tip">Archived spots still show up on the Spots &amp; Properties screen under "Show archived" if you need to bring one back.</div>
+    </div>
+
+  </section>
+
+  <footer>
+    Need something this page doesn't cover? Email <a href="mailto:support@sageoutdoors.app">support@sageoutdoors.app</a>.
+  </footer>
+
+</main>
+
+</body>
+</html>
