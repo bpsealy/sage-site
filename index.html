@@ -1,333 +1,827 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sage Help &amp; How-To</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sage — Hunting & Fishing Intelligence</title>
+<meta name="description" content="Sage learns the conditions behind your best days. A hunting and fishing companion that scores upcoming days against your own logged trips — and gets smarter the more you log." />
+<link rel="icon" type="image/png" href="/assets/favicon.png" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
+<meta property="og:title" content="Sage — Hunting & Fishing Intelligence" />
+<meta property="og:description" content="Score upcoming days against your own logged trips. The pattern engine gets smarter the more you log." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sageoutdoors.app" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  @font-face {
-    font-family: 'Montserrat';
-    src: local('Montserrat');
-    font-weight: 400;
+  :root {
+    --green: #254117; --green-deep: #182c0f; --green-soft: #2f5320;
+    --white: #ffffff; --white-dim: #d7ddd2; --white-faint: #9fae97; --black: #000000;
+    --line: rgba(255,255,255,0.12); --maxw: 1120px; --ease: cubic-bezier(0.22,1,0.36,1);
   }
-  :root{
-    --bg: #05070a;
-    --surface: #10160f;
-    --surface-2: #0c110d;
-    --cream: #F0EBD8;
-    --cream-dim: rgba(240,235,216,0.62);
-    --cream-faint: rgba(240,235,216,0.38);
-    --amber: #F3A93C;
-    --rule: rgba(240,235,216,0.12);
-    --rule-strong: rgba(240,235,216,0.22);
-    --maxw: 700px;
-  }
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--cream);
-    font-family:'Montserrat',-apple-system,BlinkMacSystemFont,sans-serif;
-    font-weight:400;
-    line-height:1.55;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:var(--amber);text-decoration:none;}
-  a:hover{text-decoration:underline;}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--green); color: var(--white); font-family: "Montserrat", system-ui, sans-serif; font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
-  header.topbar{
-    position:sticky; top:0; z-index:20;
-    background:rgba(5,7,10,0.92);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--rule);
-  }
-  .topbar-inner{
-    max-width:960px; margin:0 auto;
-    display:flex; align-items:center; gap:14px;
-    padding:14px 20px;
-  }
-  .topbar-inner img{height:26px; width:auto; display:block;}
-  .topbar-inner .wordmark{
-    font-weight:800; letter-spacing:3px; font-size:16px; color:var(--cream);
-  }
-  .topbar-inner .divider{width:1px;height:18px;background:var(--rule-strong);}
-  .topbar-inner .pagelabel{
-    font-size:14px; color:var(--cream-dim); font-weight:500;
-  }
+  .topo { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6; }
+  .topo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .topo path { fill: none; stroke: rgba(255,255,255,0.04); stroke-width: 1; }
 
-  nav.sectionnav{
-    max-width:960px; margin:0 auto;
-    display:flex; gap:6px; overflow-x:auto;
-    padding:0 20px 12px 20px;
-    -ms-overflow-style:none; scrollbar-width:none;
-  }
-  nav.sectionnav::-webkit-scrollbar{display:none;}
-  nav.sectionnav a{
-    flex:0 0 auto;
-    font-size:13.5px; font-weight:600; color:var(--cream-dim);
-    background:transparent;
-    border:1px solid var(--rule);
-    padding:7px 13px; border-radius:20px;
-    white-space:nowrap;
-  }
-  nav.sectionnav a.current{
-    color:var(--bg); background:var(--amber); border-color:var(--amber);
-  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+  .brand img, .closer .mark, .foot .left img { filter: brightness(0) invert(1); }
 
-  main{max-width:var(--maxw); margin:0 auto; padding:36px 20px 100px;}
+  header { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(10px); background: rgba(37,65,23,0.78); border-bottom: 1px solid var(--line); }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 70px; }
+  .brand img { height: 34px; width: auto; display: block; }
+  .navlinks { display: flex; align-items: center; gap: 30px; }
+  .navlinks a { color: var(--white-dim); text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; transition: color 0.2s var(--ease); }
+  .navlinks a:hover { color: var(--white); }
+  .navlinks .cta { color: var(--green); background: var(--white); padding: 10px 20px; border-radius: 100px; font-weight: 700; }
+  .navlinks .cta:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  @media (max-width: 760px) { .navlinks .ghost { display: none; } }
 
-  .intro h1{
-    font-size:30px; font-weight:800; letter-spacing:-0.3px;
-    margin:0 0 14px;
-  }
-  .intro p{
-    font-size:16px; color:var(--cream-dim); margin:0 0 10px; max-width:62ch;
-  }
-  .intro{margin-bottom:44px; padding-bottom:36px; border-bottom:1px solid var(--rule);}
+  /* Hero */
+  .hero { padding: 88px 0 84px; position: relative; }
+  .hero-mark { position: absolute; right: -30px; top: 50%; transform: translateY(-50%); width: min(440px, 40vw); opacity: 0.07; pointer-events: none; z-index: 0; filter: brightness(0) invert(1); }
+  @media (max-width: 900px) { .hero-mark { display: none; } }
+  .hero-grid { display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 52px; align-items: center; }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; } }
 
-  section.doc-section{margin-bottom:64px;}
-  section.doc-section h2{
-    font-size:23px; font-weight:800; margin:0 0 8px;
-    scroll-margin-top:110px;
-  }
-  section.doc-section > p.section-dek{
-    font-size:15.5px; color:var(--cream-dim); margin:0 0 30px; max-width:60ch;
-  }
+  .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--white); border: 1px solid var(--line); border-radius: 100px; padding: 7px 15px; margin-bottom: 26px; background: rgba(0,0,0,0.15); }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--white); }
+  h1 { font-weight: 800; font-size: clamp(38px, 5.6vw, 66px); line-height: 1.03; letter-spacing: -0.02em; max-width: 16ch; margin-bottom: 24px; }
+  .lede { font-size: clamp(17px, 2vw, 20px); color: var(--white-dim); max-width: 50ch; margin-bottom: 34px; font-weight: 500; }
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; }
+  .appstore { display: inline-flex; align-items: center; gap: 12px; background: var(--white); color: var(--green); text-decoration: none; border-radius: 14px; padding: 13px 22px; font-weight: 700; transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease); box-shadow: 0 10px 34px rgba(0,0,0,0.28); }
+  .appstore:hover { transform: translateY(-2px); box-shadow: 0 16px 44px rgba(0,0,0,0.36); }
+  .appstore svg { width: 26px; height: 26px; }
+  .appstore .small { font-size: 11px; font-weight: 600; opacity: 0.72; line-height: 1; }
+  .appstore .big { font-size: 18px; line-height: 1.1; }
+  .appstore .stack { display: flex; flex-direction: column; gap: 2px; }
+  .platform-note { font-size: 14px; color: var(--white-faint); font-weight: 500; }
 
-  .step{
-    padding:26px 0; border-top:1px solid var(--rule);
-  }
-  .step:first-of-type{border-top:none; padding-top:0;}
-  .step-head{
-    display:flex; align-items:baseline; gap:12px; margin-bottom:8px;
-  }
-  .step-num{
-    font-weight:800; font-size:14px; color:var(--amber);
-    flex:0 0 auto;
-  }
-  .step-title{
-    font-weight:700; font-size:17px; color:var(--cream);
-  }
-  .step p{
-    font-size:15px; color:var(--cream-dim); margin:0 0 4px 26px; max-width:56ch;
-  }
-  .step ul{
-    margin:8px 0 4px 26px; padding-left:18px; color:var(--cream-dim); font-size:15px;
-  }
-  .step ul li{margin-bottom:4px;}
-  .step .tip{
-    margin:12px 0 0 26px; font-size:13.5px; color:var(--cream-faint);
-    border-left:2px solid var(--rule-strong); padding-left:10px;
-  }
-  .shot{
-    margin:16px 0 0 26px;
-    max-width:280px;
-  }
-  .shot img{
-    width:100%; display:block; border-radius:14px;
-    border:1px solid var(--rule-strong);
-  }
-  .shot-caption{
-    font-size:12.5px; color:var(--cream-faint); margin-top:6px;
-  }
-  .shot-row{
-    display:flex; gap:16px; margin:16px 0 0 26px; flex-wrap:wrap;
-  }
-  .shot-row .shot{margin:0; max-width:220px;}
+  /* Live weather card */
+  .wx-card { background: rgba(0,0,0,0.20); border: 1px solid var(--line); border-radius: 22px; padding: 26px 26px 22px; backdrop-filter: blur(6px); box-shadow: 0 18px 50px rgba(0,0,0,0.28); }
+  @media (max-width: 900px) { .wx-card { max-width: 420px; } }
+  .wx-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .wx-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--white-faint); margin-bottom: 4px; }
+  .wx-loc { font-size: 17px; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
+  .wx-icon { color: var(--white); flex: none; }
+  .wx-icon svg { width: 44px; height: 44px; display: block; }
+  .wx-temp { font-size: 64px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin: 18px 0 4px; }
+  .wx-temp .deg { font-size: 28px; font-weight: 700; color: var(--white-dim); vertical-align: super; margin-left: 2px; }
+  .wx-cond { font-size: 16px; font-weight: 600; color: var(--white-dim); margin-bottom: 20px; min-height: 1.2em; }
+  .wx-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .wx-stat { display: flex; flex-direction: column; gap: 3px; }
+  .wx-stat .k { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-faint); }
+  .wx-stat .v { font-size: 14px; font-weight: 700; color: var(--white); }
+  .wx-moon { display: flex; align-items: center; gap: 14px; border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
+  .moon-glyph { flex: none; }
+  .moon-glyph svg { width: 38px; height: 38px; display: block; }
+  .moon-name { font-size: 14px; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
+  .moon-sub { font-size: 12px; color: var(--white-faint); font-weight: 500; margin-top: 3px; }
+  .wx-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 18px; }
+  .wx-source { font-size: 12px; color: var(--white-faint); font-weight: 500; }
+  .wx-precise { background: none; border: none; color: var(--white-dim); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 0; }
+  .wx-precise:hover { color: var(--white); }
 
-  footer{
-    max-width:960px; margin:0 auto; padding:30px 20px 60px;
-    border-top:1px solid var(--rule);
-    font-size:13px; color:var(--cream-faint);
-  }
-  footer a{color:var(--cream-dim);}
+  /* Sections */
+  section { position: relative; z-index: 1; }
+  .band { padding: 84px 0; border-top: 1px solid var(--line); }
+  .band.deep { background: var(--green-deep); }
+  .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white); opacity: 0.7; margin-bottom: 16px; }
+  .band h2 { font-weight: 800; font-size: clamp(28px, 4.4vw, 44px); line-height: 1.1; letter-spacing: -0.015em; max-width: 20ch; margin-bottom: 18px; }
+  .band .sub { color: var(--white-dim); max-width: 56ch; font-size: 18px; font-weight: 500; }
+
+  .features { display: grid; grid-template-columns: repeat(2,1fr); gap: 1px; margin-top: 52px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  @media (max-width: 760px){ .features{ grid-template-columns: 1fr; } }
+  .feature { background: var(--green-deep); padding: 34px 32px; transition: background 0.25s var(--ease); }
+  .feature:hover { background: var(--green-soft); }
+  .feature .ico { width: 40px; height: 40px; margin-bottom: 18px; color: var(--white); }
+  .feature h3 { font-weight: 700; font-size: 21px; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .feature p { color: var(--white-dim); font-size: 16px; font-weight: 500; }
+
+  /* Capability tiles */
+  .caps { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; margin-top: 52px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  @media (max-width: 900px){ .caps{ grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 520px){ .caps{ grid-template-columns: 1fr; } }
+  .cap { background: var(--green); padding: 26px 24px; transition: background 0.25s var(--ease); }
+  .cap:hover { background: var(--green-soft); }
+  .cap .ico { width: 30px; height: 30px; margin-bottom: 14px; color: var(--white); }
+  .cap h4 { font-weight: 700; font-size: 16px; margin-bottom: 5px; letter-spacing: -0.01em; }
+  .cap p { color: var(--white-dim); font-size: 14px; font-weight: 500; line-height: 1.5; }
+
+  .spotlight { background: var(--green-soft); border: 1px solid var(--line); border-radius: 22px; padding: clamp(36px, 6vw, 64px); }
+  .spotlight h2 { max-width: 18ch; }
+  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top: 44px; }
+  @media (max-width: 760px){ .steps{ grid-template-columns: 1fr; gap: 22px; } }
+  .step .num { font-weight: 800; font-size: 14px; color: var(--green); background: var(--white); width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 14px; }
+  .step h4 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .step p { color: var(--white-dim); font-size: 15px; font-weight: 500; }
+
+  .closer { text-align: center; padding: 100px 0; }
+  .closer .mark { width: 76px; margin: 0 auto 28px; display: block; }
+  .closer h2 { margin: 0 auto 30px; font-weight: 800; font-size: clamp(28px,4.4vw,44px); line-height: 1.1; letter-spacing: -0.015em; max-width: 22ch; }
+  .closer .cta-row { justify-content: center; }
+
+  footer { border-top: 1px solid var(--line); padding: 46px 0; background: var(--green-deep); }
+  .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+  .foot .left { display: flex; align-items: center; gap: 16px; }
+  .foot .left img { height: 26px; }
+  .foot .copy { color: var(--white-faint); font-size: 14px; font-weight: 500; }
+  .foot-links { display: flex; gap: 26px; }
+  .foot-links a { color: var(--white-dim); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .foot-links a:hover { color: var(--white); }
+
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce){ .reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} }
 </style>
 </head>
 <body>
 
-<header class="topbar">
-  <div class="topbar-inner">
-    <img src="assets/brand/sage-mark-amber.svg" alt="Sage">
-    <span class="wordmark">SAGE</span>
-    <span class="divider"></span>
-    <span class="pagelabel">Help &amp; How-To</span>
+<div class="topo" aria-hidden="true">
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <path d="M-50,200 C200,120 400,260 650,180 C880,110 1050,230 1250,160" />
+    <path d="M-50,260 C200,190 400,320 650,250 C880,185 1050,300 1250,235" />
+    <path d="M-50,330 C220,270 420,390 660,320 C900,260 1060,370 1250,310" />
+    <path d="M-50,420 C240,360 440,470 680,400 C920,340 1080,450 1250,395" />
+    <path d="M-50,520 C260,460 460,560 700,490 C940,430 1100,540 1250,490" />
+    <path d="M-50,620 C280,560 480,650 720,585 C960,525 1120,630 1250,585" />
+    <path d="M-50,710 C300,660 500,740 740,680 C980,625 1140,720 1250,680" />
+  </svg>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="brand" aria-label="Sage home"><img src="/assets/sage-lockup.svg" alt="Sage — Hunting & Fishing Intelligence" /></a>
+    <nav class="navlinks">
+      <a class="ghost" href="#features">Features</a>
+      <a class="ghost" href="#pattern">Pattern Match</a>
+      <!-- TODO: replace href with your live App Store listing URL once released -->
+      <a class="cta" href="https://apps.apple.com/app/id6763920816" target="_blank" rel="noopener">Download</a>
+    </nav>
   </div>
-  <nav class="sectionnav">
-    <a href="#core" class="">The Core of Sage</a>
-    <a href="#spots-properties" class="current">Spots &amp; Properties</a>
-    <a href="#target-buck">Target Buck</a>
-    <a href="#trail-cam">Trail Cam</a>
-    <a href="#camp">Camp</a>
-    <a href="#logging-recap">Logging &amp; Recap</a>
-    <a href="#fishing">Fishing</a>
-    <a href="#weather">Weather &amp; Conditions</a>
-    <a href="#onx">Import from onX</a>
-    <a href="#pro">Pro &amp; Subscription</a>
-  </nav>
 </header>
 
+<a id="top"></a>
+
 <main>
-
-  <div class="intro">
-    <h1>How Sage works</h1>
-    <p>Sage learns from every hunt and fish you log, then scores your upcoming days against that history so you know when your spots are actually worth a sit. This page walks through every part of the app in detail, with real screens from Sage alongside each step.</p>
-    <p>Use the bar above to jump to a section, or just scroll — everything follows the order you'd naturally set the app up in.</p>
-  </div>
-
-  <section class="doc-section" id="spots-properties">
-    <h2>Spots &amp; Properties</h2>
-    <p class="section-dek">Properties are the land you hunt — a lease, a family farm, public ground. Spots are the individual stands, blinds, or waypoints inside that land. Every spot keeps its own history, its own preferred wind, and its own score.</p>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">1</span>
-        <span class="step-title">Open Spots &amp; Properties</span>
-      </div>
-      <p>From the Hunting tab, tap the pin icon in the top right to open the map, or use the gear icon next to it for settings. Spots &amp; Properties lives under the map view's toolbar — it lists every property you've created, any Camps you belong to, and every active spot, with an archived section tucked below.</p>
-      <div class="shot">
-        <img src="assets/spots-properties/spots-properties-list.jpg" alt="Spots and Properties list showing Clay's Camp and Home under Properties, Sealy Camp TF under Camps, and Uncle Mark's Camp under Active Spots">
-        <div class="shot-caption">The Spots &amp; Properties list — Properties, Camps, and Active Spots each get their own section.</div>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">2</span>
-        <span class="step-title">Add a spot or a property</span>
-      </div>
-      <p>Tap the <strong>+</strong> in the top right. You'll get three choices: <strong>Add spot</strong> to drop a new pin, <strong>New property</strong> to create a piece of land to organize spots under, or <strong>New camp</strong> to start a shared workspace (covered in the Camp section).</p>
-      <div class="shot">
-        <img src="assets/spots-properties/spots-properties-menu.jpg" alt="The add menu with Add spot, New property, and New camp options">
-        <div class="shot-caption">The + menu — pick the one that matches what you're setting up.</div>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">3</span>
-        <span class="step-title">Create a property</span>
-      </div>
-      <p>Give it a name (your lease name, "Home," a family farm), then set its location on the map. A property's location is pinned once and stays static — every spot inside that property shares this one location for weather and wind, so pin it at the center of the land, not any one stand.</p>
-      <p>If you've already got spots sitting around ungrouped, you can check them off right here under <strong>Add existing spots</strong> to fold them into the new property immediately.</p>
-      <div class="shot">
-        <img src="assets/spots-properties/new-property.jpg" alt="New property form with name field, Set on map location, and a checklist of existing spots to add">
-        <div class="shot-caption">Creating a property — name it, pin its location, and optionally sweep in existing spots.</div>
-      </div>
-      <div class="tip">A property's pinned location drives the weather and wind shown for every spot inside it, so accuracy here matters more than it looks like it would.</div>
-    </div>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">4</span>
-        <span class="step-title">Create a spot</span>
-      </div>
-      <p>Choose <strong>Add spot</strong>, name it, and pick a stand type — Box, Ladder, Ground Blind, Climber, Lock-On, Tripod, Food Plot, or Natural. Further down, set the habitat details that actually apply: cover type, water features, terrain, food and attractant sources, and structure or edge features like a funnel or fence line. None of it is required, but the more you fill in, the more Sage has to work with later.</p>
-      <div class="shot-row">
-        <div class="shot">
-          <img src="assets/spots-properties/new-spot-top.jpg" alt="New Hunting Spot form showing name field, stand type options, and optimal wind directions">
-          <div class="shot-caption">Name and stand type at the top of the form.</div>
+  <section class="hero">
+    <img class="hero-mark" src="/assets/sage-mark.svg" alt="" aria-hidden="true" />
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow reveal"><span class="dot"></span> For hunters &amp; anglers · iPhone</span>
+        <h1 class="reveal">Read the conditions behind your best days.</h1>
+        <p class="lede reveal">Sage scores upcoming days against your own logged trips and sightings — weather, pressure, wind, moon, solunar — and gets sharper the more you log. Your field notes, turned into a forecast that only you have.</p>
+        <div class="cta-row reveal" id="download">
+          <!-- TODO: point href at the live App Store URL when the listing goes live -->
+         <a class="appstore" href="https://apps.apple.com/app/id6763920816" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.36 1.43c.04 1.06-.36 2.1-1.04 2.87-.7.79-1.86 1.4-2.98 1.31-.05-1.04.39-2.09 1.05-2.83.72-.81 1.94-1.41 2.97-1.35zM20.5 17.06c-.5 1.14-.74 1.65-1.38 2.66-.9 1.41-2.16 3.17-3.73 3.18-1.4.02-1.76-.91-3.65-.9-1.9.01-2.29.92-3.69.9-1.57-.01-2.77-1.6-3.67-3.01C1.84 16.04 1.58 11.3 3.13 8.78c1.1-1.8 2.84-2.85 4.47-2.85 1.66 0 2.71.91 4.08.91 1.34 0 2.15-.91 4.08-.91 1.46 0 3 .79 4.1 2.16-3.6 1.97-3.02 7.11.54 8.97z"/></svg>
+            <span class="stack"><span class="small">Download on the</span><span class="big">App Store</span></span>
+          </a>
+          <span class="platform-note">Sage Pro · 1 month free, then $14.99/yr</span>
         </div>
-        <div class="shot">
-          <img src="assets/spots-properties/new-spot-habitat-map.jpg" alt="New Hunting Spot form scrolled to habitat cover, water, terrain, food, and structure tags with a location map">
-          <div class="shot-caption">Habitat tags and the location picker further down.</div>
+      </div>
+
+      <div class="reveal">
+        <div class="wx-card" id="wx">
+          <div class="wx-top">
+            <div>
+              <div class="wx-kicker">Live conditions</div>
+              <div class="wx-loc" id="wxLoc">Locating…</div>
+            </div>
+            <div class="wx-icon" id="wxIcon"></div>
+          </div>
+          <div class="wx-temp" id="wxTemp">—</div>
+          <div class="wx-cond" id="wxCond">Loading your local weather…</div>
+          <div class="wx-stats" id="wxStats">
+            <div class="wx-stat"><span class="k">Feels</span><span class="v">—</span></div>
+            <div class="wx-stat"><span class="k">Wind</span><span class="v">—</span></div>
+            <div class="wx-stat"><span class="k">Humidity</span><span class="v">—</span></div>
+          </div>
+          <div class="wx-moon" id="wxMoon">
+            <div class="moon-glyph" id="moonGlyph"></div>
+            <div class="moon-info">
+              <div class="moon-name" id="moonName">&#8212;</div>
+              <div class="moon-sub" id="moonSub">&#8212;</div>
+            </div>
+          </div>
+          <div class="wx-foot">
+            <span class="wx-source" id="wxSource">Loading&#8230;</span>
+            <button class="wx-precise" id="wxPrecise" type="button">Use exact location</button>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">5</span>
-        <span class="step-title">Set the spot's location</span>
-      </div>
-      <p>Scroll to the map at the bottom of the New Spot form. Tap <strong>Use current</strong> to drop the pin where you're standing, pick <strong>From saved</strong> to reuse a previously saved location, or tap the map itself to open the full-screen location picker and drag the pin to the exact spot.</p>
-      <div class="shot">
-        <img src="assets/spots-properties/set-location-map.jpg" alt="Full screen Set Location map with a draggable pin and coordinates shown">
-        <div class="shot-caption">The full-screen location picker — pan the map until the pin sits exactly where you want it, then Done.</div>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">6</span>
-        <span class="step-title">Set the spot's optimal wind</span>
-      </div>
-      <p>Under <strong>Optimal Wind (From)</strong>, tap every compass direction this stand hunts well in. This is separate from live wind data — it's you telling Sage which winds actually work for this stand's setup, so the app can flag when today's forecast wind lines up.</p>
-      <div class="shot">
-        <img src="assets/spots-properties/edit-spot.jpg" alt="Edit Spot form showing the Optimal Wind grid with N selected and a Property row set to Not assigned">
-        <div class="shot-caption">The wind grid on the Edit Spot screen — N is selected here, and Selected/Clear tracks your picks.</div>
-      </div>
-      <div class="tip">You can select more than one direction if a stand hunts well from several winds. Tap Clear to start over.</div>
-    </div>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">7</span>
-        <span class="step-title">Assign a spot to a property</span>
-      </div>
-      <p>On the Edit Spot screen, the <strong>Property</strong> row shows the spot's current assignment — "Not assigned" if it's still ungrouped. Tap <strong>Assign</strong> to open the property picker: choose an existing property, tap <strong>Ungrouped</strong> to remove it from all properties, or tap <strong>Create new property</strong> to build one on the spot without leaving this screen.</p>
-      <div class="shot">
-        <img src="assets/spots-properties/move-to-property.jpg" alt="Move to property sheet listing Ungrouped, Clay's Camp, and Home, with a Create new property option">
-        <div class="shot-caption">The property picker — Ungrouped is always available if a spot doesn't belong under any property.</div>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">8</span>
-        <span class="step-title">Edit an existing spot</span>
-      </div>
-      <p>Open any spot's detail page and tap the pencil icon top right. Everything set at creation — name, stand type, optimal wind, property, camera assignment, notes, and every habitat tag — is editable here, and Save writes the changes back immediately.</p>
-    </div>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">9</span>
-        <span class="step-title">See a spot's full history</span>
-      </div>
-      <p>Every spot's detail page shows today's score, its best window, and why — a wind cone compass shows the live wind against the stand's optimal directions, and tags like <strong>time of day</strong> or <strong>temperature</strong> show which factors are matching in your favor. Below that, log counts for the spot break out into three tabs: <strong>Sightings</strong>, <strong>Logs</strong>, and <strong>Bucks</strong>, each scrollable in place.</p>
-      <div class="shot-row">
-        <div class="shot">
-          <img src="assets/spots-properties/spot-detail-overview.jpg" alt="Spot detail overview with score, off-pattern flag, wind cone compass, and stat counts">
-          <div class="shot-caption">Today's score and why, at the top of every spot.</div>
-        </div>
-        <div class="shot">
-          <img src="assets/spots-properties/spot-detail-logs.jpg" alt="Spot detail Logs tab listing individual hunt entries with star ratings">
-          <div class="shot-caption">The Logs tab — every hunt logged at this spot.</div>
-        </div>
-      </div>
-      <div class="shot-row">
-        <div class="shot">
-          <img src="assets/spots-properties/spot-detail-sightings.jpg" alt="Spot detail Sightings tab listing individual buck sightings by date">
-          <div class="shot-caption">The Sightings tab — every buck seen here, and when.</div>
-        </div>
-        <div class="shot">
-          <img src="assets/spots-properties/spot-detail-bucks.jpg" alt="Spot detail Bucks tab listing named target bucks tied to this spot">
-          <div class="shot-caption">The Bucks tab — target bucks associated with this spot.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-head">
-        <span class="step-num">10</span>
-        <span class="step-title">Archive a spot</span>
-      </div>
-      <p>From the Hunting list, swipe left on a spot and tap <strong>Archive Spot</strong>. Archiving keeps the spot's history intact but pulls it out of active scoring and off the map — use it for a stand you've pulled or a lease you've dropped, not for one you're just not hunting this week.</p>
-      <div class="shot">
-        <img src="assets/spots-properties/archive-spot.jpg" alt="Swipe action on a spot row revealing the red Archive Spot button">
-        <div class="shot-caption">Swipe left on any spot in the list to archive it.</div>
-      </div>
-      <div class="tip">Archived spots still show up on the Spots &amp; Properties screen under "Show archived" if you need to bring one back.</div>
-    </div>
-
   </section>
 
-  <footer>
-    Need something this page doesn't cover? Email <a href="mailto:support@sageoutdoors.app">support@sageoutdoors.app</a>.
-  </footer>
+  <!-- FLAGSHIP FEATURES -->
+  <section class="band deep" id="features">
+    <div class="wrap">
+      <p class="kicker reveal">What's inside</p>
+      <h2 class="reveal">A field companion built around your own data.</h2>
+      <p class="sub reveal">No generic "good fishing weather" guesses. Sage learns from the trips you actually log, then applies that to the days ahead.</p>
+      <div class="features">
+        <div class="feature reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <h3>Pattern Match</h3>
+          <p>A rating-weighted scoring engine correlates your logged trips against the conditions that produced them, scoring upcoming days for the spots you actually hunt and fish.</p>
+        </div>
+        <div class="feature reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-6 4 4 5-7 4 5"/><path d="M3 4v16h18"/></svg>
+          <h3>7-Day Hunt &amp; Fish Forecasts</h3>
+          <p>Scored outlooks per spot and per target buck — pressure trends, wind, moon phase, solunar overlap and cold fronts, read together instead of one tile at a time.</p>
+        </div>
+        <div class="feature reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+          <h3>A Logbook That Pays You Back</h3>
+          <p>Log trips, catches and sightings with photos and conditions. Every entry sharpens the engine — the logbook isn't a diary, it's training data for your forecast.</p>
+        </div>
+        <div class="feature reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>
+          <h3>Share With Your Crew</h3>
+          <p>Send a logged trip to a hunting partner and keep a shared picture of a spot across devices, synced privately through your iCloud.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- CAPABILITY BREADTH -->
+  <section class="band">
+    <div class="wrap">
+      <p class="kicker reveal">All in one kit</p>
+      <h2 class="reveal">Everything you check before a trip, in one place.</h2>
+      <p class="sub reveal">Weather is just the start. Sage pulls the environmental data that actually moves game and fish — and keeps the history so the engine has something to learn from.</p>
+      <div class="caps">
+        <div class="cap reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></svg>
+          <h4>Target Bucks</h4>
+          <p>Per-buck pattern scoring and rut-phase timing for the deer you're after.</p>
+        </div>
+        <div class="cap reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8c2 0 2.5-2 4.5-2S9 8 11 8s2.5-2 4.5-2S18 8 20 8M2 14c2 0 2.5-2 4.5-2S9 14 11 14s2.5-2 4.5-2S18 14 20 14M2 20c2 0 2.5-2 4.5-2S9 20 11 20s2.5-2 4.5-2S18 20 20 20"/></svg>
+          <h4>Tides</h4>
+          <p>NOAA tide predictions and stage for saltwater spots.</p>
+        </div>
+        <div class="cap reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0M3 13c3-2 6 2 9 0s6-2 9 0M3 19c3-2 6 2 9 0s6-2 9 0"/></svg>
+          <h4>River &amp; Dam Flow</h4>
+          <p>USGS water levels and flow for the river you're fishing.</p>
+        </div>
+        <div class="cap reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/><path d="M3.5 8a9 9 0 0 1 1-2"/></svg>
+          <h4>Weather History</h4>
+          <p>Past conditions going back decades, so patterns have real depth.</p>
+        </div>
+        <div class="cap reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+          <h4>Logbook Insights</h4>
+          <p>Your own trends surfaced — the conditions and phases of past success.</p>
+        </div>
+        <div class="cap reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.2 6.2 0 0 0 10.5 10.5z"/></svg>
+          <h4>Solunar &amp; Moon</h4>
+          <p>Major and minor feeding windows plus moon phase for each day.</p>
+        </div>
+        <div class="cap reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>
+          <h4>Topographic Maps</h4>
+          <p>Topo mapping to mark, study and route into your spots.</p>
+        </div>
+        <div class="cap reveal">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16h10a3.5 3.5 0 0 0 .5-6.96A5 5 0 0 0 8 10.2 3.5 3.5 0 0 0 7 16z"/><path d="M9 19l-1 2M13 19l-1 2M17 19l-1 2"/></svg>
+          <h4>Live Weather &amp; Radar</h4>
+          <p>Current conditions, wind, and precipitation radar for right now.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PATTERN MATCH SPOTLIGHT -->
+  <section class="band deep" id="pattern">
+    <div class="wrap">
+      <div class="spotlight reveal">
+        <p class="kicker">The difference</p>
+        <h2>It gets smarter every time you log a trip.</h2>
+        <p class="sub">Most apps show you the weather. Sage learns which weather worked for you, at your spots — then ranks the days ahead accordingly.</p>
+        <div class="steps">
+          <div class="step"><div class="num">1</div><h4>Log what happened</h4><p>Record a trip, a catch, or a sighting. Sage captures the conditions automatically.</p></div>
+          <div class="step"><div class="num">2</div><h4>Sage finds the pattern</h4><p>The engine weights your best days and learns the conditions behind them, spot by spot.</p></div>
+          <div class="step"><div class="num">3</div><h4>Score the days ahead</h4><p>Upcoming days are matched against that pattern, so you know when it's worth the trip.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSER -->
+  <section class="closer">
+    <div class="wrap">
+      <img class="mark reveal" src="/assets/sage-mark.svg" alt="Sage mark" />
+      <p class="kicker reveal">Get Sage</p>
+      <h2 class="reveal">Your best days leave a pattern. Sage Finds it.</h2>
+      <div class="cta-row reveal">
+        <!-- TODO: point href at the live App Store URL when the listing goes live -->
+        <a class="appstore" href="https://apps.apple.com/app/id6763920816" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.36 1.43c.04 1.06-.36 2.1-1.04 2.87-.7.79-1.86 1.4-2.98 1.31-.05-1.04.39-2.09 1.05-2.83.72-.81 1.94-1.41 2.97-1.35zM20.5 17.06c-.5 1.14-.74 1.65-1.38 2.66-.9 1.41-2.16 3.17-3.73 3.18-1.4.02-1.76-.91-3.65-.9-1.9.01-2.29.92-3.69.9-1.57-.01-2.77-1.6-3.67-3.01C1.84 16.04 1.58 11.3 3.13 8.78c1.1-1.8 2.84-2.85 4.47-2.85 1.66 0 2.71.91 4.08.91 1.34 0 2.15-.91 4.08-.91 1.46 0 3 .79 4.1 2.16-3.6 1.97-3.02 7.11.54 8.97z"/></svg>
+          <span class="stack"><span class="small">Download on the</span><span class="big">App Store</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="left">
+      <img src="/assets/sage-wordmark.svg" alt="Sage" />
+      <span class="copy">&copy; 2026 Sage Outdoors</span>
+    </div>
+    <nav class="foot-links">
+      <a href="/privacy">Privacy</a>
+      <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Terms</a>
+      <a href="mailto:support@sageoutdoors.app">Support</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* Inlined SunCalc (c) 2011-2015 Vladimir Agafonkin, MIT. https://github.com/mourner/suncalc */
+/*
+ (c) 2011-2015, Vladimir Agafonkin
+ SunCalc is a JavaScript library for calculating sun/moon position and light phases.
+ https://github.com/mourner/suncalc
+*/
+
+(function () { 'use strict';
+
+// shortcuts for easier to read formulas
+
+var PI   = Math.PI,
+    sin  = Math.sin,
+    cos  = Math.cos,
+    tan  = Math.tan,
+    asin = Math.asin,
+    atan = Math.atan2,
+    acos = Math.acos,
+    rad  = PI / 180;
+
+// sun calculations are based on http://aa.quae.nl/en/reken/zonpositie.html formulas
+
+
+// date/time constants and conversions
+
+var dayMs = 1000 * 60 * 60 * 24,
+    J1970 = 2440588,
+    J2000 = 2451545;
+
+function toJulian(date) { return date.valueOf() / dayMs - 0.5 + J1970; }
+function fromJulian(j)  { return new Date((j + 0.5 - J1970) * dayMs); }
+function toDays(date)   { return toJulian(date) - J2000; }
+
+
+// general calculations for position
+
+var e = rad * 23.4397; // obliquity of the Earth
+
+function rightAscension(l, b) { return atan(sin(l) * cos(e) - tan(b) * sin(e), cos(l)); }
+function declination(l, b)    { return asin(sin(b) * cos(e) + cos(b) * sin(e) * sin(l)); }
+
+function azimuth(H, phi, dec)  { return atan(sin(H), cos(H) * sin(phi) - tan(dec) * cos(phi)); }
+function altitude(H, phi, dec) { return asin(sin(phi) * sin(dec) + cos(phi) * cos(dec) * cos(H)); }
+
+function siderealTime(d, lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
+
+function astroRefraction(h) {
+    if (h < 0) // the following formula works for positive altitudes only.
+        h = 0; // if h = -0.08901179 a div/0 would occur.
+
+    // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
+    // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
+    return 0.0002967 / Math.tan(h + 0.00312536 / (h + 0.08901179));
+}
+
+// general sun calculations
+
+function solarMeanAnomaly(d) { return rad * (357.5291 + 0.98560028 * d); }
+
+function eclipticLongitude(M) {
+
+    var C = rad * (1.9148 * sin(M) + 0.02 * sin(2 * M) + 0.0003 * sin(3 * M)), // equation of center
+        P = rad * 102.9372; // perihelion of the Earth
+
+    return M + C + P + PI;
+}
+
+function sunCoords(d) {
+
+    var M = solarMeanAnomaly(d),
+        L = eclipticLongitude(M);
+
+    return {
+        dec: declination(L, 0),
+        ra: rightAscension(L, 0)
+    };
+}
+
+
+var SunCalc = {};
+
+
+// calculates sun position for a given date and latitude/longitude
+
+SunCalc.getPosition = function (date, lat, lng) {
+
+    var lw  = rad * -lng,
+        phi = rad * lat,
+        d   = toDays(date),
+
+        c  = sunCoords(d),
+        H  = siderealTime(d, lw) - c.ra;
+
+    return {
+        azimuth: azimuth(H, phi, c.dec),
+        altitude: altitude(H, phi, c.dec)
+    };
+};
+
+
+// sun times configuration (angle, morning name, evening name)
+
+var times = SunCalc.times = [
+    [-0.833, 'sunrise',       'sunset'      ],
+    [  -0.3, 'sunriseEnd',    'sunsetStart' ],
+    [    -6, 'dawn',          'dusk'        ],
+    [   -12, 'nauticalDawn',  'nauticalDusk'],
+    [   -18, 'nightEnd',      'night'       ],
+    [     6, 'goldenHourEnd', 'goldenHour'  ]
+];
+
+// adds a custom time to the times config
+
+SunCalc.addTime = function (angle, riseName, setName) {
+    times.push([angle, riseName, setName]);
+};
+
+
+// calculations for sun times
+
+var J0 = 0.0009;
+
+function julianCycle(d, lw) { return Math.round(d - J0 - lw / (2 * PI)); }
+
+function approxTransit(Ht, lw, n) { return J0 + (Ht + lw) / (2 * PI) + n; }
+function solarTransitJ(ds, M, L)  { return J2000 + ds + 0.0053 * sin(M) - 0.0069 * sin(2 * L); }
+
+function hourAngle(h, phi, d) { return acos((sin(h) - sin(phi) * sin(d)) / (cos(phi) * cos(d))); }
+function observerAngle(height) { return -2.076 * Math.sqrt(height) / 60; }
+
+// returns set time for the given sun altitude
+function getSetJ(h, lw, phi, dec, n, M, L) {
+
+    var w = hourAngle(h, phi, dec),
+        a = approxTransit(w, lw, n);
+    return solarTransitJ(a, M, L);
+}
+
+
+// calculates sun times for a given date, latitude/longitude, and, optionally,
+// the observer height (in meters) relative to the horizon
+
+SunCalc.getTimes = function (date, lat, lng, height) {
+
+    height = height || 0;
+
+    var lw = rad * -lng,
+        phi = rad * lat,
+
+        dh = observerAngle(height),
+
+        d = toDays(date),
+        n = julianCycle(d, lw),
+        ds = approxTransit(0, lw, n),
+
+        M = solarMeanAnomaly(ds),
+        L = eclipticLongitude(M),
+        dec = declination(L, 0),
+
+        Jnoon = solarTransitJ(ds, M, L),
+
+        i, len, time, h0, Jset, Jrise;
+
+
+    var result = {
+        solarNoon: fromJulian(Jnoon),
+        nadir: fromJulian(Jnoon - 0.5)
+    };
+
+    for (i = 0, len = times.length; i < len; i += 1) {
+        time = times[i];
+        h0 = (time[0] + dh) * rad;
+
+        Jset = getSetJ(h0, lw, phi, dec, n, M, L);
+        Jrise = Jnoon - (Jset - Jnoon);
+
+        result[time[1]] = fromJulian(Jrise);
+        result[time[2]] = fromJulian(Jset);
+    }
+
+    return result;
+};
+
+
+// moon calculations, based on http://aa.quae.nl/en/reken/hemelpositie.html formulas
+
+function moonCoords(d) { // geocentric ecliptic coordinates of the moon
+
+    var L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
+        M = rad * (134.963 + 13.064993 * d), // mean anomaly
+        F = rad * (93.272 + 13.229350 * d),  // mean distance
+
+        l  = L + rad * 6.289 * sin(M), // longitude
+        b  = rad * 5.128 * sin(F),     // latitude
+        dt = 385001 - 20905 * cos(M);  // distance to the moon in km
+
+    return {
+        ra: rightAscension(l, b),
+        dec: declination(l, b),
+        dist: dt
+    };
+}
+
+SunCalc.getMoonPosition = function (date, lat, lng) {
+
+    var lw  = rad * -lng,
+        phi = rad * lat,
+        d   = toDays(date),
+
+        c = moonCoords(d),
+        H = siderealTime(d, lw) - c.ra,
+        h = altitude(H, phi, c.dec),
+        // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
+        pa = atan(sin(H), tan(phi) * cos(c.dec) - sin(c.dec) * cos(H));
+
+    h = h + astroRefraction(h); // altitude correction for refraction
+
+    return {
+        azimuth: azimuth(H, phi, c.dec),
+        altitude: h,
+        distance: c.dist,
+        parallacticAngle: pa
+    };
+};
+
+
+// calculations for illumination parameters of the moon,
+// based on http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro formulas and
+// Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
+
+SunCalc.getMoonIllumination = function (date) {
+
+    var d = toDays(date || new Date()),
+        s = sunCoords(d),
+        m = moonCoords(d),
+
+        sdist = 149598000, // distance from Earth to Sun in km
+
+        phi = acos(sin(s.dec) * sin(m.dec) + cos(s.dec) * cos(m.dec) * cos(s.ra - m.ra)),
+        inc = atan(sdist * sin(phi), m.dist - sdist * cos(phi)),
+        angle = atan(cos(s.dec) * sin(s.ra - m.ra), sin(s.dec) * cos(m.dec) -
+                cos(s.dec) * sin(m.dec) * cos(s.ra - m.ra));
+
+    return {
+        fraction: (1 + cos(inc)) / 2,
+        phase: 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI,
+        angle: angle
+    };
+};
+
+
+function hoursLater(date, h) {
+    return new Date(date.valueOf() + h * dayMs / 24);
+}
+
+// calculations for moon rise/set times are based on http://www.stargazing.net/kepler/moonrise.html article
+
+SunCalc.getMoonTimes = function (date, lat, lng, inUTC) {
+    var t = new Date(date);
+    if (inUTC) t.setUTCHours(0, 0, 0, 0);
+    else t.setHours(0, 0, 0, 0);
+
+    var hc = 0.133 * rad,
+        h0 = SunCalc.getMoonPosition(t, lat, lng).altitude - hc,
+        h1, h2, rise, set, a, b, xe, ye, d, roots, x1, x2, dx;
+
+    // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
+    for (var i = 1; i <= 24; i += 2) {
+        h1 = SunCalc.getMoonPosition(hoursLater(t, i), lat, lng).altitude - hc;
+        h2 = SunCalc.getMoonPosition(hoursLater(t, i + 1), lat, lng).altitude - hc;
+
+        a = (h0 + h2) / 2 - h1;
+        b = (h2 - h0) / 2;
+        xe = -b / (2 * a);
+        ye = (a * xe + b) * xe + h1;
+        d = b * b - 4 * a * h1;
+        roots = 0;
+
+        if (d >= 0) {
+            dx = Math.sqrt(d) / (Math.abs(a) * 2);
+            x1 = xe - dx;
+            x2 = xe + dx;
+            if (Math.abs(x1) <= 1) roots++;
+            if (Math.abs(x2) <= 1) roots++;
+            if (x1 < -1) x1 = x2;
+        }
+
+        if (roots === 1) {
+            if (h0 < 0) rise = i + x1;
+            else set = i + x1;
+
+        } else if (roots === 2) {
+            rise = i + (ye < 0 ? x2 : x1);
+            set = i + (ye < 0 ? x1 : x2);
+        }
+
+        if (rise && set) break;
+
+        h0 = h2;
+    }
+
+    var result = {};
+
+    if (rise) result.rise = hoursLater(t, rise);
+    if (set) result.set = hoursLater(t, set);
+
+    if (!rise && !set) result[ye > 0 ? 'alwaysUp' : 'alwaysDown'] = true;
+
+    return result;
+};
+
+
+// export as Node module / AMD module / browser variable
+if (typeof exports === 'object' && typeof module !== 'undefined') module.exports = SunCalc;
+else if (typeof define === 'function' && define.amd) define(SunCalc);
+else window.SunCalc = SunCalc;
+
+}());
+
+</script>
+<script>
+  // Scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.hero .reveal').forEach((el) => el.classList.add('in'));
+  });
+
+  // ---- Live weather tile (Open-Meteo, keyless; IP geo with precise opt-in) ----
+  const $ = (id) => document.getElementById(id);
+
+  function wxCat(text) {
+    const t = (text || '').toLowerCase();
+    if (t.includes('thunder') || t.includes('storm')) return 'storm';
+    if (t.includes('snow') || t.includes('sleet') || t.includes('flurr') || t.includes('ice')) return 'snow';
+    if (t.includes('rain') || t.includes('shower') || t.includes('drizzle')) return 'rain';
+    if (t.includes('fog') || t.includes('haze') || t.includes('mist') || t.includes('smoke')) return 'fog';
+    if (t.includes('partly') || t.includes('mostly sunny') || t.includes('mostly clear')) return 'partly';
+    if (t.includes('cloud') || t.includes('overcast')) return 'cloudy';
+    if (t.includes('sunny') || t.includes('clear') || t.includes('fair')) return 'clear';
+    return 'cloudy';
+  }
+
+  function iconSVG(cat) {
+    const open = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">';
+    const cloud = '<path d="M7 16h10a3.5 3.5 0 0 0 .5-6.96A5 5 0 0 0 8 10.2 3.5 3.5 0 0 0 7 16z"/>';
+    const icons = {
+      clear: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>',
+      partly: '<circle cx="9" cy="8" r="3"/><path d="M9 2.5V4M4.2 4.2l1 1M2.5 9H4M15.5 9H14"/><path d="M9 19h8a3 3 0 0 0 .4-5.97A4.2 4.2 0 0 0 9.5 12 3 3 0 0 0 9 19z"/>',
+      cloudy: cloud,
+      fog: cloud + '<path d="M5 19h14M7 21.5h10"/>',
+      rain: cloud + '<path d="M8 18l-1 2.5M12 18l-1 2.5M16 18l-1 2.5"/>',
+      snow: cloud + '<path d="M8 19h.01M12 20h.01M16 19h.01M10 21h.01M14 21h.01"/>',
+      storm: cloud + '<path d="M12 17l-2 4h3l-2 4"/>'
+    };
+    return open + (icons[cat] || cloud) + '</svg>';
+  }
+
+  function moonPhaseName(p) {
+    if (p < 0.0625 || p >= 0.9375) return 'New Moon';
+    if (p < 0.1875) return 'Waxing Crescent';
+    if (p < 0.3125) return 'First Quarter';
+    if (p < 0.4375) return 'Waxing Gibbous';
+    if (p < 0.5625) return 'Full Moon';
+    if (p < 0.6875) return 'Waning Gibbous';
+    if (p < 0.8125) return 'Last Quarter';
+    return 'Waning Crescent';
+  }
+  function moonGlyph(fraction, waxing) {
+    var size = 38, r = size / 2, cx = r, cy = r, rr = r - 0.5;
+    var absRx = (rr * Math.abs(1 - 2 * fraction)).toFixed(2);
+    var gibbous = fraction > 0.5;
+    var outerSweep = waxing ? 1 : 0;
+    var termSweep = waxing ? (gibbous ? 1 : 0) : (gibbous ? 0 : 1);
+    var lit = 'M ' + cx + ',' + (cy - rr) +
+      ' A ' + rr + ',' + rr + ' 0 0 ' + outerSweep + ' ' + cx + ',' + (cy + rr) +
+      ' A ' + absRx + ',' + rr + ' 0 0 ' + termSweep + ' ' + cx + ',' + (cy - rr) + ' Z';
+    return '<svg viewBox="0 0 ' + size + ' ' + size + '">' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="' + rr + '" fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>' +
+      '<path d="' + lit + '" fill="#ffffff"/></svg>';
+  }
+  function fmtTime(d) {
+    if (!d) return '\u2014';
+    try { return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); } catch (e) { return '\u2014'; }
+  }
+  function renderMoon(date, lat, lon) {
+    if (typeof SunCalc === 'undefined') return;
+    var ill = SunCalc.getMoonIllumination(date);
+    var waxing = ill.phase < 0.5;
+    $('moonGlyph').innerHTML = moonGlyph(ill.fraction, waxing);
+    $('moonName').textContent = moonPhaseName(ill.phase) + ' \u00B7 ' + Math.round(ill.fraction * 100) + '% lit';
+    var sub = '\u2014';
+    if (isFinite(lat) && isFinite(lon)) {
+      var t = SunCalc.getMoonTimes(date, lat, lon);
+      var parts = [];
+      if (t.rise) parts.push('Rise ' + fmtTime(t.rise));
+      if (t.set) parts.push('Set ' + fmtTime(t.set));
+      if (parts.length) sub = parts.join('  \u00B7  ');
+      else if (t.alwaysUp) sub = 'Up all day';
+      else if (t.alwaysDown) sub = 'Down all day';
+    }
+    $('moonSub').textContent = sub;
+  }
+  function render(c, label) {
+    $('wxLoc').textContent = label;
+    $('wxIcon').innerHTML = iconSVG(wxCat(c.shortForecast));
+    $('wxTemp').innerHTML = Math.round(c.temperature) + '<span class="deg">\u00B0' + (c.temperatureUnit || 'F') + '</span>';
+    $('wxCond').textContent = c.shortForecast || '\u2014';
+    const wind = (c.windDirection ? c.windDirection + ' ' : '') + (c.windSpeed || '\u2014');
+    const hum = (c.relativeHumidity && c.relativeHumidity.value != null) ? Math.round(c.relativeHumidity.value) + '%' : '\u2014';
+    const pop = (c.probabilityOfPrecipitation && c.probabilityOfPrecipitation.value != null) ? Math.round(c.probabilityOfPrecipitation.value) + '%' : '0%';
+    $('wxStats').innerHTML =
+      '<div class="wx-stat"><span class="k">Wind</span><span class="v">' + wind + '</span></div>' +
+      '<div class="wx-stat"><span class="k">Humidity</span><span class="v">' + hum + '</span></div>' +
+      '<div class="wx-stat"><span class="k">Precip</span><span class="v">' + pop + '</span></div>';
+    $('wxSource').textContent = 'NWS \u00B7 live';
+  }
+
+  function fallback() {
+    $('wxLoc').textContent = 'Your area';
+    $('wxCond').textContent = 'Tap "Use exact location" to load.';
+    $('wxSource').textContent = 'Location unavailable';
+  }
+
+  async function loadWx(lat, lon, label) {
+    // NWS requires <=4 decimal places on the points endpoint
+    const pt = await fetch('https://api.weather.gov/points/' + lat.toFixed(4) + ',' + lon.toFixed(4),
+      { headers: { 'Accept': 'application/geo+json' } });
+    if (!pt.ok) throw new Error('points');
+    const pj = await pt.json();
+    const hourlyUrl = pj.properties && pj.properties.forecastHourly;
+    if (!hourlyUrl) throw new Error('no-hourly');
+    const rl = pj.properties.relativeLocation && pj.properties.relativeLocation.properties;
+    const nwsLabel = rl ? [rl.city, rl.state].filter(Boolean).join(', ') : null;
+    const h = await fetch(hourlyUrl, { headers: { 'Accept': 'application/geo+json' } });
+    if (!h.ok) throw new Error('hourly');
+    const hj = await h.json();
+    const cur = hj.properties && hj.properties.periods && hj.properties.periods[0];
+    if (!cur) throw new Error('no-period');
+    render(cur, nwsLabel || label);
+  }
+
+  async function init() {
+    try {
+      const r = await fetch('https://get.geojs.io/v1/ip/geo.json');
+      if (!r.ok) throw new Error('geo');
+      const g = await r.json();
+      const lat = parseFloat(g.latitude), lon = parseFloat(g.longitude);
+      if (!isFinite(lat) || !isFinite(lon)) throw new Error('geo-bad');
+      renderMoon(new Date(), lat, lon);
+      const label = [g.city, g.region].filter(Boolean).join(', ') || 'Near you';
+      await loadWx(lat, lon, label);
+    } catch (e) {
+      fallback();
+    }
+  }
+
+  $('wxPrecise').addEventListener('click', () => {
+    if (!navigator.geolocation) return;
+    const prev = $('wxCond').textContent;
+    $('wxCond').textContent = 'Getting your location\u2026';
+    navigator.geolocation.getCurrentPosition(
+      (p) => { renderMoon(new Date(), p.coords.latitude, p.coords.longitude); loadWx(p.coords.latitude, p.coords.longitude, 'Your location').catch(fallback); },
+      () => { $('wxCond').textContent = prev; }
+    );
+  });
+
+  renderMoon(new Date(), NaN, NaN);
+  init();
+</script>
+<!-- Cloudflare Web Analytics — replace 964783d5e7c34290b690268ef7abd596 with the token from your beacon snippet -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "964783d5e7c34290b690268ef7abd596"}'></script>
+<!-- End Cloudflare Web Analytics -->
 
 </body>
 </html>
