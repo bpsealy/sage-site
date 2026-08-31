@@ -51,18 +51,26 @@
     padding:16px 28px;
   }
   .topbar-inner img{height:30px; width:auto; display:block; filter:brightness(0) invert(1);}
+  .brand-link{display:flex; align-items:center; line-height:0; opacity:1; transition:opacity 0.2s var(--ease);}
+  .brand-link:hover{opacity:0.75;}
   .topbar-inner .divider{width:1px;height:18px;background:var(--line);}
   .topbar-inner .pagelabel{
     font-size:14px; color:var(--white-dim); font-weight:600;
   }
 
+  .nav-wrap{position:relative; max-width:960px; margin:0 auto;}
   nav.sectionnav{
-    max-width:960px; margin:0 auto; position:relative; z-index:1;
+    position:relative; z-index:1;
     display:flex; gap:8px; overflow-x:auto;
     padding:0 28px 14px 28px;
     -ms-overflow-style:none; scrollbar-width:none;
   }
   nav.sectionnav::-webkit-scrollbar{display:none;}
+  .nav-fade{
+    position:absolute; top:0; right:0; bottom:14px; width:44px;
+    background:linear-gradient(to right, transparent, var(--green) 70%);
+    pointer-events:none; z-index:2;
+  }
   nav.sectionnav a{
     flex:0 0 auto;
     font-size:13.5px; font-weight:600; color:var(--white-dim);
@@ -77,6 +85,7 @@
   nav.sectionnav a.current{
     color:var(--green); background:var(--white); border-color:var(--white); font-weight:700;
   }
+  nav.sectionnav a:last-child{margin-right:24px;}
 
   main{max-width:var(--maxw); margin:0 auto; padding:48px 28px 100px; position:relative; z-index:1;}
 
@@ -161,22 +170,27 @@
 
 <header class="topbar">
   <div class="topbar-inner">
-    <img src="../assets/sage-lockup.svg" alt="Sage">
+    <a href="/" class="brand-link" aria-label="Sage home">
+      <img src="../assets/sage-lockup.svg" alt="Sage">
+    </a>
     <span class="divider"></span>
     <span class="pagelabel">Help &amp; How-To</span>
   </div>
-  <nav class="sectionnav">
-    <a href="#core" class="">The Core of Sage</a>
-    <a href="#spots-properties">Spots &amp; Properties</a>
-    <a href="#target-buck">Target Buck</a>
-    <a href="#trail-cam">Trail Cam</a>
-    <a href="#camp">Camp</a>
-    <a href="#logging-recap">Logging &amp; Recap</a>
-    <a href="#fishing">Fishing</a>
-    <a href="#weather">Weather &amp; Conditions</a>
-    <a href="#onx">Import from onX</a>
-    <a href="#pro">Pro &amp; Subscription</a>
-  </nav>
+  <div class="nav-wrap">
+    <nav class="sectionnav">
+      <a href="#core" class="">The Core of Sage</a>
+      <a href="#spots-properties">Spots &amp; Properties</a>
+      <a href="#target-buck">Target Buck</a>
+      <a href="#trail-cam">Trail Cam</a>
+      <a href="#camp">Camp</a>
+      <a href="#logging-recap">Logging &amp; Recap</a>
+      <a href="#fishing">Fishing</a>
+      <a href="#weather">Weather &amp; Conditions</a>
+      <a href="#onx">Import from onX</a>
+      <a href="#pro">Pro &amp; Subscription</a>
+    </nav>
+    <div class="nav-fade"></div>
+  </div>
 </header>
 
 <main>
