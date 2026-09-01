@@ -1,829 +1,1443 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sage — Hunting & Fishing Intelligence</title>
-<meta name="description" content="Sage learns the conditions behind your best days. A hunting and fishing companion that scores upcoming days against your own logged trips — and gets smarter the more you log." />
-<link rel="icon" type="image/png" href="/assets/favicon.png" />
-<link rel="apple-touch-icon" href="/assets/favicon.png" />
-<meta property="og:title" content="Sage — Hunting & Fishing Intelligence" />
-<meta property="og:description" content="Score upcoming days against your own logged trips. The pattern engine gets smarter the more you log." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://sageoutdoors.app" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sage Help &amp; How-To</title>
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
+  :root{
     --green: #254117; --green-deep: #182c0f; --green-soft: #2f5320;
-    --white: #ffffff; --white-dim: #d7ddd2; --white-faint: #9fae97; --black: #000000;
-    --line: rgba(255,255,255,0.12); --maxw: 1120px; --ease: cubic-bezier(0.22,1,0.36,1);
+    --white: #ffffff; --white-dim: #d7ddd2; --white-faint: #9fae97;
+    --line: rgba(255,255,255,0.12);
+    --maxw: 700px;
+    --ease: cubic-bezier(0.22,1,0.36,1);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--green); color: var(--white); font-family: "Montserrat", system-ui, sans-serif; font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--green);
+    color:var(--white);
+    font-family:"Montserrat",system-ui,sans-serif;
+    font-weight:400;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:var(--white);text-decoration:underline; text-underline-offset:2px;}
+  a:hover{color:var(--white-dim);}
 
-  .topo { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6; }
-  .topo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .topo path { fill: none; stroke: rgba(255,255,255,0.04); stroke-width: 1; }
+  .bg-mark{
+    position:fixed; right:-60px; top:120px; width:min(460px,42vw);
+    opacity:0.05; pointer-events:none; z-index:0;
+    filter:brightness(0) invert(1);
+  }
+  @media (max-width:900px){ .bg-mark{display:none;} }
 
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
-  .brand img, .closer .mark, .foot .left img { filter: brightness(0) invert(1); }
+  header.topbar{
+    position:sticky; top:0; z-index:20;
+    background:rgba(37,65,23,0.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{
+    max-width:960px; margin:0 auto;
+    display:flex; align-items:center; gap:14px;
+    padding:16px 28px;
+  }
+  .topbar-inner img{height:30px; width:auto; display:block; filter:brightness(0) invert(1);}
+  .brand-link{display:flex; align-items:center; line-height:0; opacity:1; transition:opacity 0.2s var(--ease);}
+  .brand-link:hover{opacity:0.75;}
+  .topbar-inner .divider{width:1px;height:18px;background:var(--line);}
+  .topbar-inner .pagelabel{
+    font-size:14px; color:var(--white-dim); font-weight:600;
+  }
 
-  header { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(10px); background: rgba(37,65,23,0.78); border-bottom: 1px solid var(--line); }
-  .nav { display: flex; align-items: center; justify-content: space-between; height: 70px; }
-  .brand img { height: 34px; width: auto; display: block; }
-  .navlinks { display: flex; align-items: center; gap: 30px; }
-  .navlinks a { color: var(--white-dim); text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; transition: color 0.2s var(--ease); }
-  .navlinks a:hover { color: var(--white); }
-  .navlinks .cta { color: var(--green); background: var(--white); padding: 10px 20px; border-radius: 100px; font-weight: 700; }
-  .navlinks .cta:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-  @media (max-width: 760px) { .navlinks .ghost { display: none; } }
+  .nav-wrap{position:relative; max-width:960px; margin:0 auto;}
+  nav.sectionnav{
+    position:relative; z-index:1;
+    display:flex; gap:8px; overflow-x:auto;
+    padding:0 28px 14px 28px;
+    -ms-overflow-style:none; scrollbar-width:none;
+  }
+  nav.sectionnav::-webkit-scrollbar{display:none;}
+  .nav-fade{
+    position:absolute; top:0; bottom:14px; width:52px;
+    pointer-events:none; z-index:2;
+  }
+  .nav-fade-right{
+    right:0;
+    background:linear-gradient(to right, transparent, var(--green) 70%);
+  }
+  .nav-fade-left{
+    left:0;
+    background:linear-gradient(to left, transparent, var(--green) 70%);
+  }
+  .nav-arrow{
+    position:absolute; top:0; bottom:14px; width:28px;
+    display:flex; align-items:center; justify-content:center;
+    background:none; border:none; padding:0; margin:0;
+    color:var(--white); cursor:pointer; z-index:3;
+    opacity:0.8; transition:opacity 0.2s var(--ease);
+  }
+  .nav-arrow:hover{opacity:1;}
+  .nav-arrow svg{width:15px; height:15px; display:block;}
+  .nav-arrow-left{left:2px;}
+  .nav-arrow-right{right:2px;}
+  nav.sectionnav a{
+    flex:0 0 auto;
+    font-size:13.5px; font-weight:600; color:var(--white-dim);
+    text-decoration:none;
+    background:transparent;
+    border:1px solid var(--line);
+    padding:7px 14px; border-radius:100px;
+    white-space:nowrap;
+    transition:color 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  nav.sectionnav a:hover{color:var(--white);}
+  nav.sectionnav a.current{
+    color:var(--green); background:var(--white); border-color:var(--white); font-weight:700;
+  }
+  nav.sectionnav a:last-child{margin-right:24px;}
 
-  /* Hero */
-  .hero { padding: 88px 0 84px; position: relative; }
-  .hero-mark { position: absolute; right: -30px; top: 50%; transform: translateY(-50%); width: min(440px, 40vw); opacity: 0.07; pointer-events: none; z-index: 0; filter: brightness(0) invert(1); }
-  @media (max-width: 900px) { .hero-mark { display: none; } }
-  .hero-grid { display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 52px; align-items: center; }
-  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; } }
+  main{max-width:var(--maxw); margin:0 auto; padding:48px 28px 100px; position:relative; z-index:1;}
 
-  .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--white); border: 1px solid var(--line); border-radius: 100px; padding: 7px 15px; margin-bottom: 26px; background: rgba(0,0,0,0.15); }
-  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--white); }
-  h1 { font-weight: 800; font-size: clamp(38px, 5.6vw, 66px); line-height: 1.03; letter-spacing: -0.02em; max-width: 16ch; margin-bottom: 24px; }
-  .lede { font-size: clamp(17px, 2vw, 20px); color: var(--white-dim); max-width: 50ch; margin-bottom: 34px; font-weight: 500; }
-  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; }
-  .appstore { display: inline-flex; align-items: center; gap: 12px; background: var(--white); color: var(--green); text-decoration: none; border-radius: 14px; padding: 13px 22px; font-weight: 700; transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease); box-shadow: 0 10px 34px rgba(0,0,0,0.28); }
-  .appstore:hover { transform: translateY(-2px); box-shadow: 0 16px 44px rgba(0,0,0,0.36); }
-  .appstore svg { width: 26px; height: 26px; }
-  .appstore .small { font-size: 11px; font-weight: 600; opacity: 0.72; line-height: 1; }
-  .appstore .big { font-size: 18px; line-height: 1.1; }
-  .appstore .stack { display: flex; flex-direction: column; gap: 2px; }
-  .platform-note { font-size: 14px; color: var(--white-faint); font-weight: 500; }
+  .intro .eyebrow{
+    display:inline-flex; align-items:center; gap:9px;
+    font-size:12px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--white); border:1px solid var(--line); border-radius:100px;
+    padding:7px 15px; margin-bottom:22px; background:rgba(0,0,0,0.15);
+  }
+  .intro h1{
+    font-size:clamp(30px,4vw,38px); font-weight:800; letter-spacing:-0.02em;
+    margin:0 0 16px; max-width:16ch;
+  }
+  .intro p{
+    font-size:16px; color:var(--white-dim); margin:0 0 10px; max-width:62ch; font-weight:500;
+  }
+  .intro{margin-bottom:48px; padding-bottom:40px; border-bottom:1px solid var(--line);}
 
-  /* Live weather card */
-  .wx-card { background: rgba(0,0,0,0.20); border: 1px solid var(--line); border-radius: 22px; padding: 26px 26px 22px; backdrop-filter: blur(6px); box-shadow: 0 18px 50px rgba(0,0,0,0.28); }
-  @media (max-width: 900px) { .wx-card { max-width: 420px; } }
-  .wx-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-  .wx-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--white-faint); margin-bottom: 4px; }
-  .wx-loc { font-size: 17px; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
-  .wx-icon { color: var(--white); flex: none; }
-  .wx-icon svg { width: 44px; height: 44px; display: block; }
-  .wx-temp { font-size: 64px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin: 18px 0 4px; }
-  .wx-temp .deg { font-size: 28px; font-weight: 700; color: var(--white-dim); vertical-align: super; margin-left: 2px; }
-  .wx-cond { font-size: 16px; font-weight: 600; color: var(--white-dim); margin-bottom: 20px; min-height: 1.2em; }
-  .wx-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 1px solid var(--line); padding-top: 16px; }
-  .wx-stat { display: flex; flex-direction: column; gap: 3px; }
-  .wx-stat .k { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-faint); }
-  .wx-stat .v { font-size: 14px; font-weight: 700; color: var(--white); }
-  .wx-moon { display: flex; align-items: center; gap: 14px; border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
-  .moon-glyph { flex: none; }
-  .moon-glyph svg { width: 38px; height: 38px; display: block; }
-  .moon-name { font-size: 14px; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
-  .moon-sub { font-size: 12px; color: var(--white-faint); font-weight: 500; margin-top: 3px; }
-  .wx-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 18px; }
-  .wx-source { font-size: 12px; color: var(--white-faint); font-weight: 500; }
-  .wx-precise { background: none; border: none; color: var(--white-dim); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 0; }
-  .wx-precise:hover { color: var(--white); }
+  section.doc-section{margin-bottom:68px; scroll-margin-top:132px;}
+  section.doc-section h2{
+    font-size:26px; font-weight:800; margin:0 0 10px; letter-spacing:-0.01em;
+    scroll-margin-top:132px;
+  }
+  section.doc-section > p.section-dek{
+    font-size:15.5px; color:var(--white-dim); margin:0 0 32px; max-width:60ch; font-weight:500;
+  }
 
-  /* Sections */
-  section { position: relative; z-index: 1; }
-  .band { padding: 84px 0; border-top: 1px solid var(--line); }
-  .band.deep { background: var(--green-deep); }
-  .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white); opacity: 0.7; margin-bottom: 16px; }
-  .band h2 { font-weight: 800; font-size: clamp(28px, 4.4vw, 44px); line-height: 1.1; letter-spacing: -0.015em; max-width: 20ch; margin-bottom: 18px; }
-  .band .sub { color: var(--white-dim); max-width: 56ch; font-size: 18px; font-weight: 500; }
+  .step{
+    padding:28px 0; border-top:1px solid var(--line);
+  }
+  .step:first-of-type{border-top:none; padding-top:0;}
+  .step-head{
+    display:flex; align-items:center; gap:14px; margin-bottom:10px;
+  }
+  .step-num{
+    font-weight:800; font-size:13px; color:var(--green);
+    background:var(--white); width:26px; height:26px; border-radius:50%;
+    display:grid; place-items:center; flex:0 0 auto; margin-right:14px;
+  }
+  .step-title{
+    font-weight:700; font-size:17px; color:var(--white);
+  }
+  .step p{
+    font-size:15px; color:var(--white-dim); margin:0 0 4px 40px; max-width:56ch;
+  }
+  .step ul{
+    margin:8px 0 4px 40px; padding-left:18px; color:var(--white-dim); font-size:15px;
+  }
+  .step ul li{margin-bottom:4px;}
+  .step .tip{
+    margin:14px 0 0 40px; font-size:13.5px; color:var(--white-faint);
+    border-left:2px solid var(--line); padding-left:12px;
+  }
+  .shot{
+    margin:18px 0 0 40px;
+    max-width:280px;
+  }
+  .shot img{
+    width:100%; display:block; border-radius:14px;
+    border:1px solid var(--line);
+    box-shadow:0 14px 34px rgba(0,0,0,0.28);
+  }
+  .shot-caption{
+    font-size:12.5px; color:var(--white-faint); margin-top:8px;
+  }
+  .shot-row{
+    display:flex; gap:18px; margin:18px 0 0 40px; flex-wrap:wrap;
+  }
+  .shot-row .shot{margin:0; max-width:220px;}
 
-  .features { display: grid; grid-template-columns: repeat(2,1fr); gap: 1px; margin-top: 52px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
-  @media (max-width: 760px){ .features{ grid-template-columns: 1fr; } }
-  .feature { background: var(--green-deep); padding: 34px 32px; transition: background 0.25s var(--ease); }
-  .feature:hover { background: var(--green-soft); }
-  .feature .ico { width: 40px; height: 40px; margin-bottom: 18px; color: var(--white); }
-  .feature h3 { font-weight: 700; font-size: 21px; margin-bottom: 8px; letter-spacing: -0.01em; }
-  .feature p { color: var(--white-dim); font-size: 16px; font-weight: 500; }
-
-  /* Capability tiles */
-  .caps { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; margin-top: 52px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
-  @media (max-width: 900px){ .caps{ grid-template-columns: repeat(2,1fr); } }
-  @media (max-width: 520px){ .caps{ grid-template-columns: 1fr; } }
-  .cap { background: var(--green); padding: 26px 24px; transition: background 0.25s var(--ease); }
-  .cap:hover { background: var(--green-soft); }
-  .cap .ico { width: 30px; height: 30px; margin-bottom: 14px; color: var(--white); }
-  .cap h4 { font-weight: 700; font-size: 16px; margin-bottom: 5px; letter-spacing: -0.01em; }
-  .cap p { color: var(--white-dim); font-size: 14px; font-weight: 500; line-height: 1.5; }
-
-  .spotlight { background: var(--green-soft); border: 1px solid var(--line); border-radius: 22px; padding: clamp(36px, 6vw, 64px); }
-  .spotlight h2 { max-width: 18ch; }
-  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top: 44px; }
-  @media (max-width: 760px){ .steps{ grid-template-columns: 1fr; gap: 22px; } }
-  .step .num { font-weight: 800; font-size: 14px; color: var(--green); background: var(--white); width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 14px; }
-  .step h4 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-  .step p { color: var(--white-dim); font-size: 15px; font-weight: 500; }
-
-  .closer { text-align: center; padding: 100px 0; }
-  .closer .mark { width: 76px; margin: 0 auto 28px; display: block; }
-  .closer h2 { margin: 0 auto 30px; font-weight: 800; font-size: clamp(28px,4.4vw,44px); line-height: 1.1; letter-spacing: -0.015em; max-width: 22ch; }
-  .closer .cta-row { justify-content: center; }
-
-  footer { border-top: 1px solid var(--line); padding: 46px 0; background: var(--green-deep); }
-  .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
-  .foot .left { display: flex; align-items: center; gap: 16px; }
-  .foot .left img { height: 26px; }
-  .foot .copy { color: var(--white-faint); font-size: 14px; font-weight: 500; }
-  .foot-links { display: flex; gap: 26px; }
-  .foot-links a { color: var(--white-dim); text-decoration: none; font-size: 14px; font-weight: 600; }
-  .foot-links a:hover { color: var(--white); }
-
-  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
-  .reveal.in { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce){ .reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} }
+  footer{
+    max-width:960px; margin:0 auto; padding:34px 28px 60px; position:relative; z-index:1;
+    border-top:1px solid var(--line);
+    font-size:13px; color:var(--white-faint);
+  }
+  footer a{color:var(--white-dim);}
 </style>
 </head>
 <body>
 
-<div class="topo" aria-hidden="true">
-  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-    <path d="M-50,200 C200,120 400,260 650,180 C880,110 1050,230 1250,160" />
-    <path d="M-50,260 C200,190 400,320 650,250 C880,185 1050,300 1250,235" />
-    <path d="M-50,330 C220,270 420,390 660,320 C900,260 1060,370 1250,310" />
-    <path d="M-50,420 C240,360 440,470 680,400 C920,340 1080,450 1250,395" />
-    <path d="M-50,520 C260,460 460,560 700,490 C940,430 1100,540 1250,490" />
-    <path d="M-50,620 C280,560 480,650 720,585 C960,525 1120,630 1250,585" />
-    <path d="M-50,710 C300,660 500,740 740,680 C980,625 1140,720 1250,680" />
-  </svg>
-</div>
+<img class="bg-mark" src="../assets/sage-mark.svg" alt="">
 
-<header>
-  <div class="wrap nav">
-    <a href="#top" class="brand" aria-label="Sage home"><img src="/assets/sage-lockup.svg" alt="Sage — Hunting & Fishing Intelligence" /></a>
-    <nav class="navlinks">
-      <a class="ghost" href="#features">Features</a>
-      <a class="ghost" href="#pattern">Pattern Match</a>
-      <a class="ghost" href="/help/">Help & How To</a>
-      <!-- TODO: replace href with your live App Store listing URL once released -->
-      <a class="cta" href="https://apps.apple.com/app/id6763920816" target="_blank" rel="noopener">Download</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="/" class="brand-link" aria-label="Sage home">
+      <img src="../assets/sage-lockup.svg" alt="Sage">
+    </a>
+    <span class="divider"></span>
+    <span class="pagelabel">Help &amp; How-To</span>
+  </div>
+  <div class="nav-wrap">
+    <nav class="sectionnav">
+      <a href="#core" class="">The Core of Sage</a>
+      <a href="#spots-properties">Spots &amp; Properties</a>
+      <a href="#target-buck">Target Buck</a>
+      <a href="#trail-cam">Trail Cam</a>
+      <a href="#camp">Camp</a>
+      <a href="#logging-recap">Logging &amp; Recap</a>
+      <a href="#fishing">Fishing</a>
+      <a href="#weather">Weather &amp; Conditions</a>
+      <a href="#onx">Import from onX</a>
+      <a href="#pro">Pro &amp; Subscription</a>
     </nav>
+    <div class="nav-fade nav-fade-left" id="navFadeLeft"></div>
+    <div class="nav-fade nav-fade-right" id="navFadeRight"></div>
+    <button type="button" class="nav-arrow nav-arrow-left" id="navArrowLeft" aria-label="Scroll navigation left">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button type="button" class="nav-arrow nav-arrow-right" id="navArrowRight" aria-label="Scroll navigation right">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
   </div>
 </header>
 
-<a id="top"></a>
-
 <main>
-  <section class="hero">
-    <img class="hero-mark" src="/assets/sage-mark.svg" alt="" aria-hidden="true" />
-    <div class="wrap hero-grid">
-      <div>
-        <span class="eyebrow reveal"><span class="dot"></span> For hunters &amp; anglers · iPhone</span>
-        <h1 class="reveal">Read the conditions behind your best days.</h1>
-        <p class="lede reveal">Sage scores upcoming days against your own logged trips and sightings — weather, pressure, wind, moon, solunar — and gets sharper the more you log. Your field notes, turned into a forecast that only you have.</p>
-        <div class="cta-row reveal" id="download">
-          <!-- TODO: point href at the live App Store URL when the listing goes live -->
-         <a class="appstore" href="https://apps.apple.com/app/id6763920816" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.36 1.43c.04 1.06-.36 2.1-1.04 2.87-.7.79-1.86 1.4-2.98 1.31-.05-1.04.39-2.09 1.05-2.83.72-.81 1.94-1.41 2.97-1.35zM20.5 17.06c-.5 1.14-.74 1.65-1.38 2.66-.9 1.41-2.16 3.17-3.73 3.18-1.4.02-1.76-.91-3.65-.9-1.9.01-2.29.92-3.69.9-1.57-.01-2.77-1.6-3.67-3.01C1.84 16.04 1.58 11.3 3.13 8.78c1.1-1.8 2.84-2.85 4.47-2.85 1.66 0 2.71.91 4.08.91 1.34 0 2.15-.91 4.08-.91 1.46 0 3 .79 4.1 2.16-3.6 1.97-3.02 7.11.54 8.97z"/></svg>
-            <span class="stack"><span class="small">Download on the</span><span class="big">App Store</span></span>
-          </a>
-          <span class="platform-note">Sage Pro · 1 month free, then $14.99/yr</span>
-        </div>
-      </div>
 
-      <div class="reveal">
-        <div class="wx-card" id="wx">
-          <div class="wx-top">
-            <div>
-              <div class="wx-kicker">Live conditions</div>
-              <div class="wx-loc" id="wxLoc">Locating…</div>
-            </div>
-            <div class="wx-icon" id="wxIcon"></div>
-          </div>
-          <div class="wx-temp" id="wxTemp">—</div>
-          <div class="wx-cond" id="wxCond">Loading your local weather…</div>
-          <div class="wx-stats" id="wxStats">
-            <div class="wx-stat"><span class="k">Feels</span><span class="v">—</span></div>
-            <div class="wx-stat"><span class="k">Wind</span><span class="v">—</span></div>
-            <div class="wx-stat"><span class="k">Humidity</span><span class="v">—</span></div>
-          </div>
-          <div class="wx-moon" id="wxMoon">
-            <div class="moon-glyph" id="moonGlyph"></div>
-            <div class="moon-info">
-              <div class="moon-name" id="moonName">&#8212;</div>
-              <div class="moon-sub" id="moonSub">&#8212;</div>
-            </div>
-          </div>
-          <div class="wx-foot">
-            <span class="wx-source" id="wxSource">Loading&#8230;</span>
-            <button class="wx-precise" id="wxPrecise" type="button">Use exact location</button>
-          </div>
+  <div class="intro">
+    <span class="eyebrow"><span style="width:6px;height:6px;border-radius:50%;background:var(--white);display:inline-block;"></span>HELP &amp; HOW-TO</span>
+    <h1>How Sage works</h1>
+    <p>Sage learns from every hunt and fish you log, then scores your upcoming days against that history so you know when your spots are actually worth a sit. This page walks through every part of the app in detail, with real screens from Sage alongside each step.</p>
+    <p>Use the bar above to jump to a section, or just scroll — everything follows the order you'd naturally set the app up in.</p>
+  </div>
+
+  <section class="doc-section" id="spots-properties">
+    <h2>Spots &amp; Properties</h2>
+    <p class="section-dek">Properties are the land you hunt — a lease, a family farm, public ground. Spots are the individual stands, blinds, or waypoints inside that land. Every spot keeps its own history, its own preferred wind, and its own score.</p>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <span class="step-title">Open Spots &amp; Properties</span>
+      </div>
+      <p>From the Hunting tab, tap the pin icon in the top right to open the map, or use the gear icon next to it for settings. Spots &amp; Properties lives under the map view's toolbar — it lists every property you've created, any Camps you belong to, and every active spot, with an archived section tucked below.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/spots-properties-list.jpg" alt="Spots and Properties list showing Clay's Camp and Home under Properties, Sealy Camp TF under Camps, and Uncle Mark's Camp under Active Spots">
+        <div class="shot-caption">The Spots &amp; Properties list — Properties, Camps, and Active Spots each get their own section.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <span class="step-title">Add a spot or a property</span>
+      </div>
+      <p>Tap the <strong>+</strong> in the top right. You'll get three choices: <strong>Add spot</strong> to drop a new pin, <strong>New property</strong> to create a piece of land to organize spots under, or <strong>New camp</strong> to start a shared workspace (covered in the Camp section).</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/spots-properties-menu.jpg" alt="The add menu with Add spot, New property, and New camp options">
+        <div class="shot-caption">The + menu — pick the one that matches what you're setting up.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <span class="step-title">Create a property</span>
+      </div>
+      <p>Give it a name (your lease name, "Home," a family farm), then set its location on the map. A property's location is pinned once and stays static — every spot inside that property shares this one location for weather and wind, so pin it at the center of the land, not any one stand.</p>
+      <p>If you've already got spots sitting around ungrouped, you can check them off right here under <strong>Add existing spots</strong> to fold them into the new property immediately.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/new-property.jpg" alt="New property form with name field, Set on map location, and a checklist of existing spots to add">
+        <div class="shot-caption">Creating a property — name it, pin its location, and optionally sweep in existing spots.</div>
+      </div>
+      <div class="tip">A property's pinned location drives the weather and wind shown for every spot inside it, so accuracy here matters more than it looks like it would.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <span class="step-title">Create a spot</span>
+      </div>
+      <p>Choose <strong>Add spot</strong>, name it, and pick a stand type — Box, Ladder, Ground Blind, Climber, Lock-On, Tripod, Food Plot, or Natural. Further down, set the habitat details that actually apply: cover type, water features, terrain, food and attractant sources, and structure or edge features like a funnel or fence line. None of it is required, but the more you fill in, the more Sage has to work with later.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/spots-properties/new-spot-top.jpg" alt="New Hunting Spot form showing name field, stand type options, and optimal wind directions">
+          <div class="shot-caption">Name and stand type at the top of the form.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/spots-properties/new-spot-habitat-map.jpg" alt="New Hunting Spot form scrolled to habitat cover, water, terrain, food, and structure tags with a location map">
+          <div class="shot-caption">Habitat tags and the location picker further down.</div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- FLAGSHIP FEATURES -->
-  <section class="band deep" id="features">
-    <div class="wrap">
-      <p class="kicker reveal">What's inside</p>
-      <h2 class="reveal">A field companion built around your own data.</h2>
-      <p class="sub reveal">No generic "good fishing weather" guesses. Sage learns from the trips you actually log, then applies that to the days ahead.</p>
-      <div class="features">
-        <div class="feature reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          <h3>Pattern Match</h3>
-          <p>A rating-weighted scoring engine correlates your logged trips against the conditions that produced them, scoring upcoming days for the spots you actually hunt and fish.</p>
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">5</span>
+        <span class="step-title">Set the spot's location</span>
+      </div>
+      <p>Scroll to the map at the bottom of the New Spot form. Tap <strong>Use current</strong> to drop the pin where you're standing, pick <strong>From saved</strong> to reuse a previously saved location, or tap the map itself to open the full-screen location picker and drag the pin to the exact spot.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/set-location-map.jpg" alt="Full screen Set Location map with a draggable pin and coordinates shown">
+        <div class="shot-caption">The full-screen location picker — pan the map until the pin sits exactly where you want it, then Done.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">6</span>
+        <span class="step-title">Set the spot's optimal wind</span>
+      </div>
+      <p>Under <strong>Optimal Wind (From)</strong>, tap every compass direction this stand hunts well in. This is separate from live wind data — it's you telling Sage which winds actually work for this stand's setup, so the app can flag when today's forecast wind lines up.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/edit-spot.jpg" alt="Edit Spot form showing the Optimal Wind grid with N selected and a Property row set to Not assigned">
+        <div class="shot-caption">The wind grid on the Edit Spot screen — N is selected here, and Selected/Clear tracks your picks.</div>
+      </div>
+      <div class="tip">You can select more than one direction if a stand hunts well from several winds. Tap Clear to start over.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">7</span>
+        <span class="step-title">Assign a spot to a property</span>
+      </div>
+      <p>On the Edit Spot screen, the <strong>Property</strong> row shows the spot's current assignment — "Not assigned" if it's still ungrouped. Tap <strong>Assign</strong> to open the property picker: choose an existing property, tap <strong>Ungrouped</strong> to remove it from all properties, or tap <strong>Create new property</strong> to build one on the spot without leaving this screen.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/move-to-property.jpg" alt="Move to property sheet listing Ungrouped, Clay's Camp, and Home, with a Create new property option">
+        <div class="shot-caption">The property picker — Ungrouped is always available if a spot doesn't belong under any property.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">8</span>
+        <span class="step-title">Edit an existing spot</span>
+      </div>
+      <p>Open any spot's detail page and tap the pencil icon top right. Everything set at creation — name, stand type, optimal wind, property, camera assignment, notes, and every habitat tag — is editable here, and Save writes the changes back immediately.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">9</span>
+        <span class="step-title">See a spot's full history</span>
+      </div>
+      <p>Every spot's detail page shows today's score, its best window, and why — a wind cone compass shows the live wind against the stand's optimal directions, and tags like <strong>time of day</strong> or <strong>temperature</strong> show which factors are matching in your favor. Below that, log counts for the spot break out into three tabs: <strong>Sightings</strong>, <strong>Logs</strong>, and <strong>Bucks</strong>, each scrollable in place.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/spots-properties/spot-detail-overview.jpg" alt="Spot detail overview with score, off-pattern flag, wind cone compass, and stat counts">
+          <div class="shot-caption">Today's score and why, at the top of every spot.</div>
         </div>
-        <div class="feature reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-6 4 4 5-7 4 5"/><path d="M3 4v16h18"/></svg>
-          <h3>7-Day Hunt &amp; Fish Forecasts</h3>
-          <p>Scored outlooks per spot and per target buck — pressure trends, wind, moon phase, solunar overlap and cold fronts, read together instead of one tile at a time.</p>
+        <div class="shot">
+          <img src="../assets/spots-properties/spot-detail-logs.jpg" alt="Spot detail Logs tab listing individual hunt entries with star ratings">
+          <div class="shot-caption">The Logs tab — every hunt logged at this spot.</div>
         </div>
-        <div class="feature reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
-          <h3>A Logbook That Pays You Back</h3>
-          <p>Log trips, catches and sightings with photos and conditions. Every entry sharpens the engine — the logbook isn't a diary, it's training data for your forecast.</p>
+      </div>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/spots-properties/spot-detail-sightings.jpg" alt="Spot detail Sightings tab listing individual buck sightings by date">
+          <div class="shot-caption">The Sightings tab — every buck seen here, and when.</div>
         </div>
-        <div class="feature reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>
-          <h3>Share With Your Crew</h3>
-          <p>Send a logged trip to a hunting partner and keep a shared picture of a spot across devices, synced privately through your iCloud.</p>
+        <div class="shot">
+          <img src="../assets/spots-properties/spot-detail-bucks.jpg" alt="Spot detail Bucks tab listing named target bucks tied to this spot">
+          <div class="shot-caption">The Bucks tab — target bucks associated with this spot.</div>
         </div>
       </div>
     </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">10</span>
+        <span class="step-title">Archive a spot</span>
+      </div>
+      <p>From the Hunting list, swipe left on a spot and tap <strong>Archive Spot</strong>. Archiving keeps the spot's history intact but pulls it out of active scoring and off the map — use it for a stand you've pulled or a lease you've dropped, not for one you're just not hunting this week.</p>
+      <div class="shot">
+        <img src="../assets/spots-properties/archive-spot.jpg" alt="Swipe action on a spot row revealing the red Archive Spot button">
+        <div class="shot-caption">Swipe left on any spot in the list to archive it.</div>
+      </div>
+      <div class="tip">Archived spots still show up on the Spots &amp; Properties screen under "Show archived" if you need to bring one back.</div>
+    </div>
+
   </section>
 
-  <!-- CAPABILITY BREADTH -->
-  <section class="band">
-    <div class="wrap">
-      <p class="kicker reveal">All in one kit</p>
-      <h2 class="reveal">Everything you check before a trip, in one place.</h2>
-      <p class="sub reveal">Weather is just the start. Sage pulls the environmental data that actually moves game and fish — and keeps the history so the engine has something to learn from.</p>
-      <div class="caps">
-        <div class="cap reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></svg>
-          <h4>Target Bucks</h4>
-          <p>Per-buck pattern scoring and rut-phase timing for the deer you're after.</p>
+  <section class="doc-section" id="target-buck">
+    <h2>Target Buck</h2>
+    <p class="section-dek">Target Buck tracking follows one specific deer across seasons — every sighting, every camera hit, and a forecast scored against that buck's own pattern, not just the spot's.</p>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <span class="step-title">Open Target Bucks</span>
+      </div>
+      <p>From the Hunting tab's bottom row, tap <strong>Bucks</strong>. Every buck you're tracking shows up under <strong>Active</strong>, newest sightings first. Bucks tagged <strong>[SEED]</strong> are demo data — clear it from a buck's detail page once you've got real ones of your own logged.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/target-buck/hunting-home.jpg" alt="Hunting tab bottom row showing Log Hunt, Bucks, Logbook, and Insights">
+          <div class="shot-caption">Bucks sits in the bottom row of the Hunting tab.</div>
         </div>
-        <div class="cap reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8c2 0 2.5-2 4.5-2S9 8 11 8s2.5-2 4.5-2S18 8 20 8M2 14c2 0 2.5-2 4.5-2S9 14 11 14s2.5-2 4.5-2S18 14 20 14M2 20c2 0 2.5-2 4.5-2S9 20 11 20s2.5-2 4.5-2S18 20 20 20"/></svg>
-          <h4>Tides</h4>
-          <p>NOAA tide predictions and stage for saltwater spots.</p>
-        </div>
-        <div class="cap reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0M3 13c3-2 6 2 9 0s6-2 9 0M3 19c3-2 6 2 9 0s6-2 9 0"/></svg>
-          <h4>River &amp; Dam Flow</h4>
-          <p>USGS water levels and flow for the river you're fishing.</p>
-        </div>
-        <div class="cap reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/><path d="M3.5 8a9 9 0 0 1 1-2"/></svg>
-          <h4>Weather History</h4>
-          <p>Past conditions going back decades, so patterns have real depth.</p>
-        </div>
-        <div class="cap reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
-          <h4>Logbook Insights</h4>
-          <p>Your own trends surfaced — the conditions and phases of past success.</p>
-        </div>
-        <div class="cap reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.2 6.2 0 0 0 10.5 10.5z"/></svg>
-          <h4>Solunar &amp; Moon</h4>
-          <p>Major and minor feeding windows plus moon phase for each day.</p>
-        </div>
-        <div class="cap reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>
-          <h4>Topographic Maps</h4>
-          <p>Topo mapping to mark, study and route into your spots.</p>
-        </div>
-        <div class="cap reveal">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16h10a3.5 3.5 0 0 0 .5-6.96A5 5 0 0 0 8 10.2 3.5 3.5 0 0 0 7 16z"/><path d="M9 19l-1 2M13 19l-1 2M17 19l-1 2"/></svg>
-          <h4>Live Weather &amp; Radar</h4>
-          <p>Current conditions, wind, and precipitation radar for right now.</p>
+        <div class="shot">
+          <img src="../assets/target-buck/target-bucks-list.jpg" alt="Target Bucks list showing Holyfield, Big 10, and several seed demo bucks with sighting counts">
+          <div class="shot-caption">The Target Bucks list — active bucks with sighting counts and last-seen info.</div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- PATTERN MATCH SPOTLIGHT -->
-  <section class="band deep" id="pattern">
-    <div class="wrap">
-      <div class="spotlight reveal">
-        <p class="kicker">The difference</p>
-        <h2>It gets smarter every time you log a trip.</h2>
-        <p class="sub">Most apps show you the weather. Sage learns which weather worked for you, at your spots — then ranks the days ahead accordingly.</p>
-        <div class="steps">
-          <div class="step"><div class="num">1</div><h4>Log what happened</h4><p>Record a trip, a catch, or a sighting. Sage captures the conditions automatically.</p></div>
-          <div class="step"><div class="num">2</div><h4>Sage finds the pattern</h4><p>The engine weights your best days and learns the conditions behind them, spot by spot.</p></div>
-          <div class="step"><div class="num">3</div><h4>Score the days ahead</h4><p>Upcoming days are matched against that pattern, so you know when it's worth the trip.</p></div>
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <span class="step-title">Add a new target buck</span>
+      </div>
+      <p>Tap the <strong>+</strong> in the top right. Give it a name, optionally add a photo (from a trail cam hit or your camera roll), set an estimated age, and pick the spot where you first sighted him. The button in the top right starts as <strong>Add Name</strong> — that's telling you what's still needed, not a separate action. It becomes an active Save once you've typed a name.</p>
+      <div class="shot">
+        <img src="../assets/target-buck/new-target-buck-form.jpg" alt="New Target Buck form with name field, photo add, estimated age, first sighted spot, and notes">
+        <div class="shot-caption">Creating a new target buck.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <span class="step-title">Log a sighting</span>
+      </div>
+      <p>From a buck's detail page, tap <strong>Log Sighting</strong>. Add up to 5 photos, confirm the location (defaults to the spot you're logging from), set the time, bump the count if multiple animals were with him, and add notes. Every sighting you log feeds that buck's pattern data immediately.</p>
+      <div class="shot">
+        <img src="../assets/target-buck/log-sighting-form.jpg" alt="Log Sighting form with target buck, photos, location, time, count, and notes fields">
+        <div class="shot-caption">Logging a sighting — count handles multiple animals in one sighting.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <span class="step-title">See a sighting's conditions</span>
+      </div>
+      <p>Tap any sighting in a buck's list to open its detail. Weather conditions are logged both <strong>2 hours before</strong> and <strong>at the sighting</strong> — temperature, pressure, wind, and cloud cover — so you can see exactly what was happening when he showed up, not just the average for the day.</p>
+      <div class="shot">
+        <img src="../assets/target-buck/sighting-detail.jpg" alt="Sighting Detail screen showing weather conditions 2 hours before versus at the sighting">
+        <div class="shot-caption">Sighting Detail — conditions before and at the moment he was seen.</div>
+      </div>
+      <div class="tip">Delete Sighting is available here if one was logged in error — it won't affect the rest of the buck's history.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">5</span>
+        <span class="step-title">Read a buck's overview</span>
+      </div>
+      <p>The top of every buck's detail page shows total sightings, first sighted, and last seen with location for each. Below that, a <strong>Forecast Match</strong> card scores today specifically for the spot he's most associated with — same 0–100 score and wind cone you'd see on that spot's own page.</p>
+      <div class="shot">
+        <img src="../assets/target-buck/buck-detail-top.jpg" alt="Buck detail overview showing sightings count, first sighted, last seen, and a Forecast Match score card">
+        <div class="shot-caption">A buck's overview — sighting history and today's forecast match in one place.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">6</span>
+        <span class="step-title">Check his pattern</span>
+      </div>
+      <p>The <strong>Patterns</strong> section below the forecast card is specific to this buck, not the spot in general — time-of-day activity built from his own sighting history. Sage flags it as <strong>preliminary</strong> until there's enough data logged to be confident in it.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">7</span>
+        <span class="step-title">Check his 7-day forecast</span>
+      </div>
+      <p>Tap <strong>See 7-Day Forecast</strong> on the Forecast Match card. It breaks each day down the same way the app scores any spot — a full factor list of what's working in your favor and what's off-pattern, from wind direction down to solunar and cold front proximity.</p>
+      <div class="shot">
+        <img src="../assets/target-buck/buck-forecast-week.jpg" alt="7-day forecast detail for a spot showing in-your-favor and off-pattern factors for each day">
+        <div class="shot-caption">The full week, broken down factor by factor.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">8</span>
+        <span class="step-title">Edit a target buck</span>
+      </div>
+      <p>Tap <strong>Edit</strong> from the buck's detail page. Everything set at creation — name, photo, estimated age, primary spot, first sighted date, and notes — is editable here.</p>
+      <div class="shot">
+        <img src="../assets/target-buck/edit-buck-form.jpg" alt="Edit Buck form with name, photo with change and remove options, estimated age, primary spot, first sighted date, and notes">
+        <div class="shot-caption">Editing a buck — Change Photo and Remove sit right under the current photo.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">9</span>
+        <span class="step-title">Archive or delete a buck</span>
+      </div>
+      <p>Scroll to the bottom of a buck's detail page. <strong>Archive Buck</strong> pulls him out of the active list without losing any sighting history — use this once he's been taken or you've stopped tracking him. Archived bucks show <strong>Unarchive Buck</strong> instead, so you can bring one back. <strong>Delete Buck</strong> is permanent.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/target-buck/buck-detail-archive.jpg" alt="Buck detail scrolled to the bottom showing an active Archive Buck button">
+          <div class="shot-caption">Active — Archive Buck.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/target-buck/buck-detail-unarchive.jpg" alt="Buck detail scrolled to the bottom showing an archived buck with Unarchive Buck button">
+          <div class="shot-caption">Archived — Unarchive Buck instead.</div>
         </div>
       </div>
     </div>
+
   </section>
 
-  <!-- CLOSER -->
-  <section class="closer">
-    <div class="wrap">
-      <img class="mark reveal" src="/assets/sage-mark.svg" alt="Sage mark" />
-      <p class="kicker reveal">Get Sage</p>
-      <h2 class="reveal">Your best days leave a pattern. Sage Finds it.</h2>
-      <div class="cta-row reveal">
-        <!-- TODO: point href at the live App Store URL when the listing goes live -->
-        <a class="appstore" href="https://apps.apple.com/app/id6763920816" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.36 1.43c.04 1.06-.36 2.1-1.04 2.87-.7.79-1.86 1.4-2.98 1.31-.05-1.04.39-2.09 1.05-2.83.72-.81 1.94-1.41 2.97-1.35zM20.5 17.06c-.5 1.14-.74 1.65-1.38 2.66-.9 1.41-2.16 3.17-3.73 3.18-1.4.02-1.76-.91-3.65-.9-1.9.01-2.29.92-3.69.9-1.57-.01-2.77-1.6-3.67-3.01C1.84 16.04 1.58 11.3 3.13 8.78c1.1-1.8 2.84-2.85 4.47-2.85 1.66 0 2.71.91 4.08.91 1.34 0 2.15-.91 4.08-.91 1.46 0 3 .79 4.1 2.16-3.6 1.97-3.02 7.11.54 8.97z"/></svg>
-          <span class="stack"><span class="small">Download on the</span><span class="big">App Store</span></span>
-        </a>
+  <section class="doc-section" id="trail-cam">
+    <h2>Trail Cam</h2>
+    <p class="section-dek">Trail cam photos aren't just stored in a gallery — deer tallied from your cam hits feed directly into a spot's Pattern Match score. Import happens as a batch, straight from your camera app's share sheet.</p>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <span class="step-title">Share photos from your camera app</span>
+      </div>
+      <p>From your trail camera app (Reveal shown here, but any app that can share photos works), select the photos you want to bring in and tap Share. Tap the <strong>Sage</strong> icon in the share sheet.</p>
+      <div class="shot">
+        <img src="../assets/trail-cam/share-sheet-sage.jpg" alt="iOS share sheet with 10 images selected from a trail cam app, showing the Sage icon among the share targets">
+        <div class="shot-caption">Sage shows up right in the share sheet — no separate upload step.</div>
       </div>
     </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <span class="step-title">Confirm the batch</span>
+      </div>
+      <p>Sage opens straight to a <strong>Send to Sage</strong> screen showing every photo about to come in, with an optional quick note for the batch (handy for "split G2 camera" type context). These photos will sit in Sage's Camera List until you assign them to a spot — nothing scores yet.</p>
+      <div class="shot">
+        <img src="../assets/trail-cam/send-to-sage.jpg" alt="Send to Sage screen showing 10 photos ready to import with an optional quick note field">
+        <div class="shot-caption">Confirming the batch before it lands in Sage.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <span class="step-title">Import from the Hunting tab</span>
+      </div>
+      <p>Back in Sage, the Hunting tab shows a banner — <strong>"X trail-cam photos ready to import"</strong> — as soon as a batch is waiting. Tap it to continue.</p>
+      <div class="shot">
+        <img src="../assets/trail-cam/hunting-home-import-banner.jpg" alt="Hunting Home screen showing a banner: 10 trail-cam photos ready to import, from 1 camera">
+        <div class="shot-caption">The import banner sits right above current conditions.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <span class="step-title">Confirm which photos come in</span>
+      </div>
+      <p>Photos are grouped by burst. If you already picked through them in your camera app, everything's pre-checked — tap to uncheck anything that snuck in by mistake, then <strong>Continue</strong>.</p>
+      <div class="shot">
+        <img src="../assets/trail-cam/confirm-import.jpg" alt="Confirm Import screen showing photos grouped by burst with checkmarks, assigned to Behind Fence">
+        <div class="shot-caption">Grouped by burst, already assigned to the spot you last used for this camera.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">5</span>
+        <span class="step-title">Tag each photo</span>
+      </div>
+      <p>For each photo, tag a <strong>Target Buck</strong> if one's in frame, and use the <strong>Other Deer in Frame</strong> counters — Mature Bucks, Young Bucks, Does, Fawns — to tally everything else. This tally is what feeds the spot's score, so it's worth doing even on photos with no target buck. <strong>Skip</strong> is always there for a blank or bad frame.</p>
+      <div class="shot">
+        <img src="../assets/trail-cam/tag-photo.jpg" alt="Tag Photo screen showing photo 2 of 10 with target buck field and deer count fields for mature bucks, young bucks, does, and fawns">
+        <div class="shot-caption">Tagging photo 2 of 10 — counts feed the spot's score directly.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">6</span>
+        <span class="step-title">Tag a target buck from a photo</span>
+      </div>
+      <p>Tap the Target Buck row to pick from your existing bucks, or tap <strong>New Buck Seen on Camera</strong> to create one on the spot without leaving the tagging flow.</p>
+      <div class="shot">
+        <img src="../assets/trail-cam/tag-buck-picker.jpg" alt="Target Buck picker sheet listing None, Big 10, Big 8, Drop Tine, Holyfield, Mainframe, Old Bachelor, with New Buck Seen on Camera at the bottom">
+        <div class="shot-caption">Picking a buck mid-tag, or creating a new one from what the camera caught.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">7</span>
+        <span class="step-title">Manage cameras and suggested spots</span>
+      </div>
+      <p>Under <strong>Cameras</strong>, each device shows up by the ID parsed from its photo filenames — that's not a spot name, just a way to tell cameras apart. The <strong>Suggested Spot</strong> is only your last pick for that device; tap <strong>Change</strong> any time, since cameras get moved mid-season. Registered cameras below show which spot each is currently tied to and whether it's up to date.</p>
+      <div class="shot">
+        <img src="../assets/trail-cam/cameras-screen.jpg" alt="Cameras screen showing a pending import with device ID and suggested spot, plus a list of registered cameras tied to specific spots">
+        <div class="shot-caption">Device IDs are just parsed filenames — the suggested spot is editable every time.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">8</span>
+        <span class="step-title">See trail cam activity in the Logbook</span>
+      </div>
+      <p>Filter the Logbook to <strong>Camera</strong> to see every import as its own entry — deer tallies, spot, weather at the time, all listed the same way a logged hunt is.</p>
+      <div class="shot">
+        <img src="../assets/trail-cam/logbook-camera-entries.jpg" alt="Logbook filtered to Camera showing a list of trail camera entries with deer sighting tallies">
+        <div class="shot-caption">Every camera import lands in the Logbook alongside your hunts.</div>
+      </div>
+    </div>
+
   </section>
+
+  <section class="doc-section" id="camp">
+    <h2>Camp</h2>
+    <p class="section-dek">Camp is a shared workspace for a hunting group — shared spots, a shared logbook, shared target bucks, stand reservations, and Camp Insights that roll everyone's hunts together. Everything in this section applies inside a Camp; your personal spots and logbook stay separate.</p>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <span class="step-title">Create a camp</span>
+      </div>
+      <p>From Spots &amp; Properties, tap <strong>+</strong> and choose <strong>New camp</strong>. Give it a name and pin its location on the map — that location is shared by every spot in the camp for weather and wind, the same way a personal property works. You land inside the new camp immediately after creating it; invite members afterward from Camp Settings.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/camp/add-menu-camp.jpg" alt="The plus menu showing Add spot, New property, and New camp">
+          <div class="shot-caption">Same + menu as spots and properties.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/camp/new-camp-form.jpg" alt="New camp form with name field, set on map location, and explanatory text about shared location and inviting members later">
+          <div class="shot-caption">Naming and pinning a new camp.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <span class="step-title">Invite members</span>
+      </div>
+      <p>Camp sharing runs on iCloud's native share sheet. Send the invite through Messages, Mail, or Copy Link, and set who can do what before you send it: <strong>Permission</strong> controls whether invitees can make changes or only view, and <strong>Adding People</strong> controls whether invited members can invite others too.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/camp/camp-share-sheet.jpg" alt="iOS share sheet for a Sage camp showing Messages, Mail, Safari, Notes, and Copy Link options">
+          <div class="shot-caption">The native share sheet — send however's easiest.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/camp/permission-sheet.jpg" alt="Permission sheet with Can make changes or View only, and Adding People with Anyone or Only you can add people">
+          <div class="shot-caption">Set permissions before you send the invite.</div>
+        </div>
+      </div>
+      <div class="tip">You can reopen this same share sheet any time to see who's in the camp, add more people, or tap Stop Sharing to end the camp for everyone but you.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <span class="step-title">Manage members and camp details</span>
+      </div>
+      <p>Camp Settings shows the full roster with join dates and roles, plus an overview of the camp's name, location, creation date, and season. Tap the red minus next to a member to remove them from the camp.</p>
+      <div class="shot">
+        <img src="../assets/camp/camp-settings-top.jpg" alt="Camp Settings top showing overview stats, members list with roles and joined dates, and a remove button on each member">
+        <div class="shot-caption">Camp Settings — overview, stats, and the full member list.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <span class="step-title">Configure camp settings</span>
+      </div>
+      <p>Further down, <strong>Rename Camp</strong>, <strong>Relocate Camp</strong>, and <strong>Import Spots</strong> sit under Camp. <strong>Season Start</strong> only organizes the Logbook and Insights into this-season versus past-seasons — it never affects Pattern Match scoring, since every hunt logged in any year still counts toward the score. <strong>Guest Policy</strong> controls whether members can bring guests when reserving a spot, with an optional cap per reservation and per year. <strong>Danger Zone</strong> holds Archive Camp and permanent deletion.</p>
+      <div class="shot">
+        <img src="../assets/camp/camp-settings-scrolled.jpg" alt="Camp Settings scrolled showing Season Start, Guest Policy toggles, Sharing, and Danger Zone options">
+        <div class="shot-caption">Season Start is organizational only — scoring always uses every hunt logged.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">5</span>
+        <span class="step-title">Add a spot to a camp</span>
+      </div>
+      <p>Same <strong>+</strong> menu, <strong>Add spot</strong> — name it, choose Hunting or Fishing, and set its location on the map. Camp spots use a lighter setup than personal spots; habitat detail and other tags can still be added later from the spot's own edit screen.</p>
+      <div class="shot">
+        <img src="../assets/camp/new-camp-spot-form.jpg" alt="New camp spot form with name field, hunting or fishing type toggle, and set on map location">
+        <div class="shot-caption">Adding a spot inside a camp.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">6</span>
+        <span class="step-title">View the camp map and scent cones</span>
+      </div>
+      <p>Tap the map icon in the camp header to see every spot plotted together. The <strong>Scent Cones</strong> toggle overlays each stand's wind cone against the current wind direction, so the whole group can see at a glance which stands are in play. The layers icon switches between Standard, Hybrid, Satellite, and Outdoors map styles.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/camp/camp-map-scent-cones.jpg" alt="Full screen camp map with scent cone overlays on Plot 1 and Plot 2, toggle for E wind">
+          <div class="shot-caption">Scent cones on for the current wind.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/camp/camp-map-style-picker.jpg" alt="Map style picker showing Standard, Hybrid, Satellite, and Outdoors options">
+          <div class="shot-caption">Switching map styles.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">7</span>
+        <span class="step-title">Browse camp spots and reserve a time</span>
+      </div>
+      <p>The camp's Hunting Home works like your personal one, with a member avatar stack up top and the same date tabs and forecast card. Each spot shows its score and status — <strong>Open · reserve a time</strong> in green, or <strong>Reserved by [name]</strong> in red if someone's already got it. Tap an open spot, pick a day on the calendar, choose AM, PM, or All Day, and tap Reserve.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/camp/camp-home-today.jpg" alt="Camp Hunting Home showing Plot 1 reserved by Ben Sealy and Plot 2 open to reserve">
+          <div class="shot-caption">One spot reserved, one open.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/camp/reserve-spot-sheet.jpg" alt="Reserve Spot sheet with a day calendar and AM, PM, All Day period options">
+          <div class="shot-caption">Reserving Plot 2 for the full day.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">8</span>
+        <span class="step-title">See a camp spot's detail</span>
+      </div>
+      <p>A camp spot's page looks like a personal spot's — badges, habitat, score, wind cone, factor chips — but the hunt count breaks out by member ("5 hunts · 4 by you, 1 by Asealy8"). Sightings and target buck tracking aren't built for camp spots yet; the app says so plainly rather than just showing a silent zero. A <strong>Camera at this spot</strong> toggle marks whether a trail cam covers it, and the Activity list mixes hunts and camera imports from every member, each tagged with who logged it.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/camp/camp-spot-detail-top.jpg" alt="Camp spot detail top showing badges, habitat tags, score, wind cone, and hunt attribution by member">
+          <div class="shot-caption">Hunt counts attribute to whoever logged them.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/camp/camp-spot-detail-activity.jpg" alt="Camp spot detail scrolled showing camera toggle and an activity list mixing hunts and trail camera entries by different members">
+          <div class="shot-caption">Activity from the whole camp, one shared timeline.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">9</span>
+        <span class="step-title">Check a camp spot's pattern and score breakdown</span>
+      </div>
+      <p>The 7-day view names its own pattern source right at the top — "Pattern from top 2 of 4 hunts by deer count," for example — so it's clear the score is drawn from the group's most productive hunts, not just averaged across everyone. Tap into any day for the full factor breakdown. At a camp spot with a trail cam, <strong>Camera Activity</strong> shows up as its own factor row alongside wind, pressure, and solunar — recent cam hits genuinely feed the score here, not just the hunt logs.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/camp/camp-spot-week.jpg" alt="Camp spot week view showing the pattern source explanation and a 7-day list of scores">
+          <div class="shot-caption">The pattern source is stated up front.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/camp/camp-spot-today-factors.jpg" alt="Camp spot today's factor breakdown including a Camera Activity row showing 2 does">
+          <div class="shot-caption">Camera Activity as its own scoring factor.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">10</span>
+        <span class="step-title">Browse the Camp Logbook</span>
+      </div>
+      <p>Filter by <strong>Type</strong>, <strong>Spot</strong>, or <strong>Member</strong>. Reservations with no hunt logged show up as ghosted entries so the group can see who reserved a time and never followed up with a log — real hunt and camera entries show a deer-count badge and who logged them.</p>
+      <div class="shot">
+        <img src="../assets/camp/camp-logbook-top.jpg" alt="Camp Logbook with Type, Spot, and Member filter pills, and a mix of reserved-no-hunt and logged entries">
+        <div class="shot-caption">Reservations with no follow-up log stay visible, not hidden.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">11</span>
+        <span class="step-title">Track Camp Target Bucks</span>
+      </div>
+      <p>Bucks tracked at the camp level work the same as personal target bucks, with one addition: each shows where and <strong>who</strong> first spotted him — "First seen at Plot 2 · by Ben Sealy."</p>
+      <div class="shot">
+        <img src="../assets/camp/camp-target-bucks.jpg" alt="Camp Target Bucks list showing Backyard Ten and Big 8, each with first-seen spot and member attribution">
+        <div class="shot-caption">Camp bucks credit whoever spotted them first.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">12</span>
+        <span class="step-title">Read Camp Insights</span>
+      </div>
+      <p>Camp Insights rolls up everyone's hunts: total encounters, buck-to-doe ratio, median first-sight time, and best-performing spot by deer per hour, with a This Season / All Time toggle. Scroll further for pressure trend, best time-of-day window, moon phase performance, and activity broken out by month, by spot, and by member — so the group can see not just what's working, but who's finding it.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/camp/camp-insights-overview.jpg" alt="Camp Insights overview showing hunts, avg rating, spots hunted, hunt encounters, buck to doe ratio, and best spot">
+          <div class="shot-caption">The camp's season at a glance.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/camp/camp-insights-1.jpg" alt="Camp Insights moon phase chart, by month chart, spots breakdown, and by member breakdown">
+          <div class="shot-caption">By spot and by member, further down the same page.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="doc-section" id="logging-recap">
+    <h2>Logging &amp; Recap</h2>
+    <p class="section-dek">Every hunt you log is what Pattern Match learns from. This section covers logging a hunt in detail, reviewing and sharing a single entry, reading your Hunting Insights, and generating a Season Recap.</p>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <span class="step-title">Start a hunt log</span>
+      </div>
+      <p>Tap <strong>Log Hunt</strong> from the Hunting tab. Pick a spot, then set the species — Whitetail Deer, Turkey, Duck, Dove, Hog, Squirrel, Predator, or Other.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/logging-recap/log-hunt-empty-spot.jpg" alt="Log Hunt form with an empty spot field, species set to Whitetail Deer, and deer encounter counters">
+          <div class="shot-caption">A fresh Log Hunt, spot not yet picked.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/logging-recap/log-hunt-species-picker.jpg" alt="Species picker showing Whitetail Deer, Turkey, Duck, Dove, Hog, Squirrel, Predator, and Other">
+          <div class="shot-caption">Species covers more than deer.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <span class="step-title">Log deer encounters and sighting time</span>
+      </div>
+      <p>Tally what you saw with the <strong>Mature buck / Young buck / Does / Fawns</strong> counters, then set <strong>First sighting</strong> and <strong>Sighting duration</strong>. These encounter counts are what feeds hunt-encounter stats in Insights later — logging them even on a slow sit is worth doing.</p>
+      <div class="shot">
+        <img src="../assets/logging-recap/log-hunt-encounters.jpg" alt="Log Hunt form showing deer encounter counters, first sighting time, and target buck tagging option">
+        <div class="shot-caption">Encounters, first sighting, and the Tag a Target Buck shortcut.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <span class="step-title">Tag a target buck from the log</span>
+      </div>
+      <p>Tap <strong>Tag a Target Buck</strong> to open the picker and check off any bucks that were part of this sighting — multiple bucks can be tagged on one entry.</p>
+      <div class="shot">
+        <img src="../assets/logging-recap/tag-target-bucks-sheet.jpg" alt="Tag Target Bucks sheet with a checklist of named bucks">
+        <div class="shot-caption">Tagging a buck directly from the hunt log.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <span class="step-title">Mark a harvest</span>
+      </div>
+      <p>Flip <strong>Deer harvested</strong> on to reveal Harvest Details: category (Mature buck, Young buck, Doe, Fawn), year class, weight, and full antler measurements — main beam and G1 through G4 for both sides, plus inside spread.</p>
+      <div class="shot">
+        <img src="../assets/logging-recap/log-hunt-harvest-category.jpg" alt="Harvest details with category picker open showing Mature buck, Young buck, Doe, Fawn, and antler point fields">
+        <div class="shot-caption">Full antler detail, tine by tine.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">5</span>
+        <span class="step-title">Rate the hunt and add notes or photos</span>
+      </div>
+      <p><strong>Time in the Field</strong> locks in date, start, and end. <strong>Activity</strong> rates the animal movement you saw; <strong>Overall</strong> rates the day as a whole. Both feed straight into your average ratings in Insights. Notes and up to 5 photos are optional but worth doing on any hunt you'll want to remember.</p>
+      <div class="shot">
+        <img src="../assets/logging-recap/log-hunt-time-rating.jpg" alt="Log Hunt form showing time in the field, activity slider, overall slider, notes, and photo add button">
+        <div class="shot-caption">Activity and Overall ratings drive your averages.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">6</span>
+        <span class="step-title">Review a logged entry</span>
+      </div>
+      <p>Open any entry to see its overall score, spot, duration, and Movement/Overall ratings up top. Scroll down for the same deer-encounter breakdown, harvest category/age/weight, and photos you logged.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/logging-recap/entry-top.jpg" alt="Entry detail top showing species, overall score, spot, duration, and movement and overall ratings">
+          <div class="shot-caption">Score and duration at the top.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/logging-recap/entry-encounters-conditions.jpg" alt="Entry detail showing deer encounters, category, age, weight, photos, and a conditions summary">
+          <div class="shot-caption">Encounters, harvest detail, and photos further down.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">7</span>
+        <span class="step-title">See full trip conditions</span>
+      </div>
+      <p>Tap <strong>Show full conditions</strong> for a start/mid/end breakdown of everything — temperature, feels like, humidity, dew point, pressure, wind, gusts, cloud cover, visibility, UV index, and precipitation — plus the net change across the sit for temp, pressure, and wind.</p>
+      <div class="shot">
+        <img src="../assets/logging-recap/entry-full-conditions.jpg" alt="Full conditions table showing start, mid, and end values for every weather metric during the trip">
+        <div class="shot-caption">Every condition, tracked at the start, middle, and end of the sit.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">8</span>
+        <span class="step-title">Edit or delete an entry</span>
+      </div>
+      <p>Tap <strong>Edit</strong> from an entry's detail page. Trip time is locked once logged, but spot, species, and every encounter count are editable. <strong>Delete entry</strong> sits at the bottom of the detail page if you need to remove one entirely.</p>
+      <div class="shot">
+        <img src="../assets/logging-recap/edit-entry-form.jpg" alt="Edit Entry form showing a locked trip time, spot, species, and deer encounter counters">
+        <div class="shot-caption">Trip time is locked; everything else can be corrected.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">9</span>
+        <span class="step-title">Share or stop sharing a single hunt</span>
+      </div>
+      <p>Tap the share icon on any entry to send that one hunt through Messages, Mail, or Copy Link — no Camp required for this. Reopen the same share sheet later to stop sharing that entry.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/logging-recap/share-sheet-entry.jpg" alt="Share sheet for a single Whitetail Deer hunt entry with Messages, Mail, Safari, and Notes options">
+          <div class="shot-caption">Sharing one hunt, no Camp needed.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/logging-recap/manage-shared-entry.jpg" alt="Manage shared entry sheet with Owner, Share With More People, and Stop Sharing">
+          <div class="shot-caption">Stop Sharing ends it whenever you want.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">10</span>
+        <span class="step-title">Browse Hunting Insights</span>
+      </div>
+      <p>From the Hunting tab, tap <strong>Insights</strong>. Filter by Property, Spot, or Species, then check the <strong>At a Glance</strong> summary — trips, average rating, hours logged, best and worst hunts, top species — and <strong>Hunt Encounters</strong> for total animals seen, average per hour, and harvest rate.</p>
+      <div class="shot">
+        <img src="../assets/logging-recap/insights-top-filters.jpg" alt="Hunting Insights top showing property, spot, and species filters, at a glance stats, and hunt encounters totals">
+        <div class="shot-caption">Filters narrow every stat below to exactly what you're asking about.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">11</span>
+        <span class="step-title">Dig into conditions and patterns</span>
+      </div>
+      <p><strong>Best Conditions</strong> compares your top 3 hunts against your bottom 3 across temp, pressure, wind, and clouds. Below that, <strong>Pressure Trend</strong>, <strong>Time of Day</strong>, and <strong>Moon Phase</strong> break your history down by what was actually working, each flagging your single best-performing window.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/logging-recap/insights-encounters-conditions.jpg" alt="Hunt encounters breakdown with mature, young, does, fawns, buck to doe ratio, and best conditions top 3 vs bottom 3">
+          <div class="shot-caption">Top 3 vs bottom 3 conditions, side by side.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/logging-recap/insights-timeofday-moon-month.jpg" alt="Time of day chart, moon phase breakdown, and by month chart in Hunting Insights">
+          <div class="shot-caption">Time of day and moon phase, each with a flagged best window.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">12</span>
+        <span class="step-title">See spots, species, and recent trips</span>
+      </div>
+      <p>Further down, <strong>Spots</strong> and <strong>Species</strong> rank every one you've logged by trip count and average rating, and <strong>Recent Trips</strong> lists your latest entries with their score at a glance.</p>
+      <div class="shot">
+        <img src="../assets/logging-recap/insights-spots-species-recent.jpg" alt="Spots and species ranked by trip count and average rating, plus a recent trips list">
+        <div class="shot-caption">Every spot and species, ranked by how they've actually performed.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">13</span>
+        <span class="step-title">Generate a Season Recap</span>
+      </div>
+      <p>Sage flags recaps as <strong>Ready to wrap up</strong> once a season's worth of hunts is logged, grouped by species and year. Tap one to generate it.</p>
+      <div class="shot">
+        <img src="../assets/logging-recap/recap-list.jpg" alt="Season Recaps list showing several recaps ready to wrap up, grouped by species and year">
+        <div class="shot-caption">Recaps ready whenever a season's logged.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">14</span>
+        <span class="step-title">Read and share a Season Recap</span>
+      </div>
+      <p>A recap opens with hunts, harvests, and hours logged, your <strong>Best Hunt</strong>, and a full harvest list with weight, spread, and age for each animal. Below that, <strong>Deer Seen</strong> breaks down every encounter across the season, and <strong>Conditions That Worked</strong> summarizes the pressure, wind, temperature, sky, and rut phase sampled from your top-rated hunts. Tap the share icon up top to send the whole recap out.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/logging-recap/recap-detail-top.jpg" alt="Season Recap top showing hunts, harvest, hours, best hunt, and a harvest list with weight and spread for each animal">
+          <div class="shot-caption">The season's headline numbers and every harvest.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/logging-recap/recap-detail-harvest-photos.jpg" alt="Season Recap showing deer seen breakdown, conditions that worked, and photos from the season">
+          <div class="shot-caption">Deer seen, conditions that worked, and the season's photos.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="doc-section" id="fishing">
+    <h2>Fishing</h2>
+    <p class="section-dek">Fishing works the same way hunting does — log trips, and Sage scores your upcoming days against what's actually worked at that spot, broken out by freshwater and saltwater.</p>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <span class="step-title">Log a trip</span>
+      </div>
+      <p>From a spot's card, tap <strong>Log Freshwater Trip</strong> or <strong>Log Saltwater Trip</strong> depending on the water. Sage pulls in the weather and, where available, tide or river gauge data for that trip automatically — you just fill in what you caught.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/fishing/freshwater-station-log-trip.jpg" alt="Freshwater screen showing a Log Freshwater Trip button above the linked water flow station">
+          <div class="shot-caption">Freshwater spots link to the nearest river gauge station.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/saltwater-tide-log-trip.jpg" alt="Saltwater screen showing a Log Saltwater Trip button above the linked tide station">
+          <div class="shot-caption">Saltwater spots link to the nearest tide station instead.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <span class="step-title">Review a logged trip</span>
+      </div>
+      <p>Every entry shows your bite and overall ratings, what you caught, and the weather during the trip — start, midpoint, and end, so you can see how conditions shifted while you were out. Tap <strong>Show full conditions</strong> for the full breakdown, and scroll down for water depth, flow trend, and gauge height pulled from the linked station.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/fishing/entry-summary.jpg" alt="Fishing entry detail showing species, rating, catches, and start of conditions during the trip">
+          <div class="shot-caption">Catches and ratings sit right at the top of every entry.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/entry-full-conditions.jpg" alt="Fishing entry detail scrolled down showing full weather conditions and water depth, flow, and gauge height">
+          <div class="shot-caption">Full conditions plus water depth, flow trend, and gauge height.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <span class="step-title">Your Fishing home screen</span>
+      </div>
+      <p>The Fishing tab opens on <strong>All Spots</strong>, showing your best Forecast Match across every spot along with today's bite window and solunar times. Tap a spot's pill to narrow everything on the screen down to just that spot — its own forecast match, water data, and season info.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/fishing/fishing-home-all-spots.jpg" alt="Fishing home screen with All Spots selected showing forecast match for both a freshwater and saltwater spot">
+          <div class="shot-caption">All Spots shows your best match across every spot at once.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/fishing-home-spot-selected.jpg" alt="Fishing home screen with a specific spot selected showing that spot's forecast match, water flow, and season">
+          <div class="shot-caption">Pick a spot to see its own forecast match and water data.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <span class="step-title">Check Pattern Match</span>
+      </div>
+      <p>Tap into the Forecast Match card for a spot to see the full 7-day breakdown. Sage pulls your top trips by catch count at that spot and compares each upcoming day against those exact conditions — wind, pressure, temperature, cloud cover, tide or solunar timing, all of it. <strong>In your favor</strong> and <strong>Off-pattern</strong> tell you at a glance what's lining up and what isn't.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/fishing/pattern-match-saltwater.jpg" alt="Pattern Match detail for a saltwater spot showing a 7-day forecast match score with a full conditions breakdown">
+          <div class="shot-caption">Saltwater pattern match, weighing wind, pressure, and tide.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/pattern-match-freshwater.jpg" alt="Pattern Match detail for a freshwater spot showing a lower match score with off-pattern solunar and cold front conditions">
+          <div class="shot-caption">A lower score still shows exactly why, condition by condition.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">5</span>
+        <span class="step-title">Browse your Logbook</span>
+      </div>
+      <p>Filter the Logbook to <strong>Fish</strong> to see every trip in one list — species, spot, catch count, rating, and the conditions at the time. Tap any entry to open its full detail.</p>
+      <div class="shot">
+        <img src="../assets/fishing/logbook-fish.jpg" alt="Logbook filtered to Fish showing a list of fishing entries with species, spot, catch count, and rating">
+        <div class="shot-caption">Every fishing trip you've logged, newest first.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">6</span>
+        <span class="step-title">Open Fishing Insights</span>
+      </div>
+      <p>From the Logbook, tap <strong>Insights</strong> for a full stats breakdown — best and worst spots, top species by trip count, and best conditions comparing your top-rated trips against your bottom-rated ones. Scroll further for time-of-day and moon-phase breakdowns, plus a by-month chart showing exactly when your best trips happen.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/fishing/insights-spots-species.jpg" alt="Fishing Insights showing top spots and top species ranked by average rating and trip count">
+          <div class="shot-caption">Spots and species, ranked by rating and trip count.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/insights-time-moon-month.jpg" alt="Fishing Insights showing time of day chart, moon phase breakdown, and a by-month bar chart">
+          <div class="shot-caption">Best time of day, best moon phase, best month — all data-driven.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/insights-at-a-glance.jpg" alt="Fishing Insights at-a-glance card showing total trips, average rating, catches, and best conditions comparison">
+          <div class="shot-caption">Your top 3 trips vs. bottom 3, condition by condition.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">7</span>
+        <span class="step-title">Tide and water flow data</span>
+      </div>
+      <p>Saltwater spots link to the nearest NOAA tide station, freshwater spots to the nearest USGS river gauge. Tap the station name on any spot to pick a different one nearby, or open the linked station directly for a full tide curve or discharge and gauge height chart.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/fishing/tide-stations-map.jpg" alt="Map showing nearby NOAA tide stations along the coast, with one selected">
+          <div class="shot-caption">Every nearby tide station, pick whichever fits your spot.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/saltwater-tide-detail.jpg" alt="Saltwater tide detail showing current tide height, next high tide, and a 36-hour tide curve">
+          <div class="shot-caption">Current tide, next high or low, and a 36-hour curve.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/water-flow-map.jpg" alt="Map showing nearby USGS water flow stations across the region, with one selected">
+          <div class="shot-caption">Same idea for freshwater — nearby USGS flow stations.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/river-gauge-detail.jpg" alt="River gauge detail showing current gauge height, falling trend, and 7-day discharge and gauge height charts">
+          <div class="shot-caption">Discharge and gauge height over the last 7 days.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">8</span>
+        <span class="step-title">Browse the Fishing Calendar</span>
+      </div>
+      <p>Tap <strong>Fishing Season</strong> from the home screen to open the full calendar. Switch between <strong>Saltwater</strong> and <strong>Freshwater</strong> to see every species' seasonal pattern year-round, with a star rating and a plain-language note on what's working right now.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/fishing/calendar-freshwater.jpg" alt="Fishing Calendar set to Freshwater showing Bass and Striper seasonal patterns with a year-round timeline">
+          <div class="shot-caption">Freshwater — Bass in its Fall Feed-Up window right now.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/fishing/calendar-saltwater.jpg" alt="Fishing Calendar set to Saltwater showing Tarpon, Tripletail, Snook, and Flounder seasonal patterns">
+          <div class="shot-caption">Saltwater — Tarpon mid Migration Peak.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="doc-section" id="weather">
+    <h2>Weather &amp; Conditions</h2>
+    <p class="section-dek">Every score in Sage is built on the same weather data you see here — current conditions, hourly detail, pressure trend, sun and moon, even the raw wind grid. Nothing about the forecast is hidden behind the scoring.</p>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <span class="step-title">Your Weather home screen</span>
+      </div>
+      <p>The Weather tab opens on current conditions for your active location — temperature, sky, high/low, and rain chance up top, with Pressure, Wind, and Rain Today as tappable cards. Below that, Next 24 Hours and the 7-Day Forecast scroll horizontally, and More links out to Moon, Sun, UV Index, and Air Quality.</p>
+      <div class="shot">
+        <img src="../assets/weather/weather-home.jpg" alt="Weather home screen showing current conditions, pressure, wind, rain today, next 24 hours, and 7-day forecast">
+        <div class="shot-caption">Everything starts from current conditions at your active location.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <span class="step-title">Switch locations</span>
+      </div>
+      <p>Tap the location name at the top of the Weather tab to open Locations. <strong>Current Location</strong> uses GPS; anything under <strong>Saved</strong> is a city you've searched and pinned. Tap a saved location to switch to it, or <strong>Search city</strong> to add a new one.</p>
+      <div class="shot">
+        <img src="../assets/weather/locations-list.jpg" alt="Locations screen showing Current Location and a list of saved cities, with one checked as active">
+        <div class="shot-caption">Switch between Current Location and any saved city.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <span class="step-title">Browse the 7-day forecast</span>
+      </div>
+      <p>Tap into the 7-Day Forecast for a full week view. <strong>Temperature Range</strong> charts daily highs and lows together, and <strong>Precipitation Chance</strong> shows the highest probability and total expected for each day. Tap any day below to expand it into an hourly-style summary without leaving the week view.</p>
+      <div class="shot">
+        <img src="../assets/weather/forecast-week-charts.jpg" alt="7-day forecast detail showing a temperature range chart, a precipitation chance chart, and an expanded Today summary">
+        <div class="shot-caption">Temperature and precipitation charted across the whole week.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <span class="step-title">Dig into hourly detail</span>
+      </div>
+      <p>From Next 24 Hours, tap any hour to open the full hourly breakdown. Switch tabs across the top — <strong>Temp, Precip, Wind, Pressure, Humidity</strong> — to chart that metric hour by hour, and drag anywhere on the chart to scrub to a specific time. Every hour below lists feels-like, wind, gusts, humidity, dew point, pressure, UV index, cloud cover, and visibility.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/weather/hourly-precip.jpg" alt="Hourly detail on the Precip tab showing a precipitation chance chart and a scrollable hourly list">
+          <div class="shot-caption">Precip tab — chance by the hour.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/weather/hourly-temp.jpg" alt="Hourly detail on the Temp tab showing a temperature chart with slide to explore and a scrollable hourly list">
+          <div class="shot-caption">Temp tab — slide to explore the curve.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">5</span>
+        <span class="step-title">Track pressure</span>
+      </div>
+      <p>Tap the Pressure card for the current reading and its trend, plus a 48-hour chart covering the past 24 hours and the next 24. Past 24 Hours and 7-Day Stats below show min, max, range, low, high, and average — the same pressure trend Pattern Match checks against your logged history.</p>
+      <div class="shot">
+        <img src="../assets/weather/pressure-detail.jpg" alt="Pressure detail showing current reading, falling trend, 48-hour chart, past 24 hours stats, and 7-day stats">
+        <div class="shot-caption">The same pressure trend that feeds Pattern Match scoring.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">6</span>
+        <span class="step-title">Sun and Moon</span>
+      </div>
+      <p>Tap <strong>Sun</strong> for today's sunrise, sunset, and total daylight, plus a daylight trend note and a 7-day sunrise/sunset table. Tap <strong>Moon</strong> for the current phase and illumination, a moon path chart showing rise, peak, and set times, current direction and altitude, and illumination for the next 14 days.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/weather/sun-detail.jpg" alt="Sun detail showing sunrise and sunset times, daylight trend, and a 7-day sunrise and sunset table">
+          <div class="shot-caption">Sunrise, sunset, and the daylight trend for the week ahead.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/weather/moon-detail.jpg" alt="Moon detail showing the current phase, illumination percentage, a moon path chart, and the next 14 days of illumination">
+          <div class="shot-caption">Moon phase, path, and the next 14 days at a glance.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">7</span>
+        <span class="step-title">Check Precipitation Now</span>
+      </div>
+      <p>When rain is active or imminent, a Precipitation Now banner surfaces on the home screen — tap it for a 15-minute nowcast of the next hour and an hourly total for the next 24. Rain Totals further down rolls up your past 24 hours, 7 days, month, year, and water year, cross-checked against nearby stations.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/weather/precip-now-active.jpg" alt="Precipitation Now showing active rain, a 15-minute nowcast, next 24 hours chart, and rain totals">
+          <div class="shot-caption">Active precipitation, minute by minute.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/weather/precip-now-clear.jpg" alt="Precipitation Now showing no precipitation expected, with rain totals compared across three station sources">
+          <div class="shot-caption">Clear conditions, with totals cross-checked across stations.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">8</span>
+        <span class="step-title">See weather history</span>
+      </div>
+      <p>Tap <strong>History</strong> to compare today against the same date, and the same week, going back 10 years — temperature range and precipitation, side by side by year. Tap the date at the top to step to a different day and see its own high, low, precip total, and full hourly temperature and precipitation charts.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/weather/history-overview.jpg" alt="Weather History showing 10 years of temperature range and precipitation for a single date and for the surrounding week">
+          <div class="shot-caption">10 years of history for the same date and the same week.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/weather/history-detail.jpg" alt="Weather History for a specific past date showing high, low, precip total, and hourly temperature and precipitation charts">
+          <div class="shot-caption">Step to any date for its own full breakdown.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">9</span>
+        <span class="step-title">View the wind grid and radar</span>
+      </div>
+      <p>Tap <strong>Wind</strong> from the map toolbar for a live grid of wind speed and direction arrows over your actual terrain, with a 12-hour slider to step forward. The layers icon switches between Standard, Hybrid, and Satellite. Zoom out for the regional picture, or switch to <strong>Radar</strong> for a scrubbable precipitation radar loop over the same map.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/weather/wind-grid-close.jpg" alt="Close-up wind grid map showing speed and direction arrows over local terrain with a 12-hour slider">
+          <div class="shot-caption">Wind arrows plotted right over your terrain.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/weather/wind-grid-style-picker.jpg" alt="Wind grid map with the map style picker open showing Standard, Hybrid, and Satellite options">
+          <div class="shot-caption">Standard, Hybrid, or Satellite — pick what reads clearest.</div>
+        </div>
+      </div>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/weather/wind-grid-regional.jpg" alt="Zoomed-out regional wind grid map covering multiple states with wind speed circles at various cities">
+          <div class="shot-caption">Zoom out for the wind picture across the whole region.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/weather/radar-regional.jpg" alt="Regional radar map with a scrubbable timeline showing precipitation 30 minutes in the past">
+          <div class="shot-caption">Radar loops back 30 minutes so you can see what's moving in.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="doc-section" id="onx">
+    <h2>Import from onX</h2>
+    <p class="section-dek">Already got your stands mapped out in onX Hunt? Export your waypoints once and bring the whole set into Sage — no re-dropping every pin by hand.</p>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <span class="step-title">Export your waypoints from onX</span>
+      </div>
+      <p>From a waypoint in onX, tap the share icon. Sharing a waypoint (or a folder of them) generates a link that exports as a standard GPX file — the same format Sage reads in. onX will remind you the shared content is view-only and visible to anyone with the link, which is expected; you're just generating the export.</p>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="../assets/onx/onx-waypoint-detail.jpg" alt="A waypoint open in onX Hunt showing coordinates, elevation, and a share icon">
+          <div class="shot-caption">Any waypoint's detail sheet has the share icon you need.</div>
+        </div>
+        <div class="shot">
+          <img src="../assets/onx/onx-share-view-only.jpg" alt="onX share dialog with a View Only notice and a Share Item button">
+          <div class="shot-caption">Share Item generates the GPX export.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <span class="step-title">Save the file somewhere you can find it</span>
+      </div>
+      <p>Save the exported file to Files — Downloads works fine, or anywhere else you'll remember. Sage reads GPX and KML exports, so anything onX (or another mapping app) hands you in one of those formats will work.</p>
+      <div class="shot">
+        <img src="../assets/onx/files-downloads-onx.jpg" alt="The Files app Downloads folder with the onX export file visible among other files">
+        <div class="shot-caption">Anywhere in Files works — just note where it lands.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <span class="step-title">Open Import spots from file</span>
+      </div>
+      <p>In Sage, open <strong>Settings</strong> and scroll to <strong>Import</strong>. Tap <strong>Import spots from file</strong> to open the file picker.</p>
+      <div class="shot">
+        <img src="../assets/onx/settings-import-spots.jpg" alt="Sage Settings screen scrolled to the Import section with an Import spots from file button">
+        <div class="shot-caption">Import lives in Settings, below your map style preferences.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <span class="step-title">Browse to your file</span>
+      </div>
+      <p>The standard iOS file picker opens. Use <strong>Recently Used</strong> or <strong>Browse</strong> to get to wherever you saved the export, then tap the file to select it.</p>
+      <div class="shot">
+        <img src="../assets/onx/browse-file-picker.jpg" alt="iOS file picker showing Recently Used folders and Favorites including Downloads">
+        <div class="shot-caption">The same file picker you'd use anywhere else in iOS.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">5</span>
+        <span class="step-title">Review and select waypoints</span>
+      </div>
+      <p>Sage reads the file and lists everything it found. Anything that looks like it might already exist as a spot gets flagged — <strong>Possible duplicate of [name]</strong> — and deselected by default, so you don't end up with two copies of the same stand. Use <strong>Select All</strong> / <strong>Deselect All</strong> or tap individual checkmarks, then set <strong>Hunting</strong> or <strong>Fishing</strong> for each before importing.</p>
+      <div class="shot">
+        <img src="../assets/onx/import-waypoints-list.jpg" alt="Import Waypoints screen listing four waypoints found, one flagged as a possible duplicate and deselected">
+        <div class="shot-caption">Duplicates get flagged and deselected automatically.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">6</span>
+        <span class="step-title">Review each imported spot</span>
+      </div>
+      <p>Tap <strong>Review</strong> on any waypoint before importing to set its exact details — confirm the pinned location, pick a stand type, set seats and optimal wind, tag a camera, and add habitat tags. None of it's required at import time; you can always fill it in later from the spot's own edit screen, but doing it now while onX's location data is already in front of you saves a step.</p>
+      <div class="shot">
+        <img src="../assets/onx/review-spot-form.jpg" alt="Review Spot form for an imported waypoint showing name, location map, stand type, seats, optimal wind, camera, and habitat fields">
+        <div class="shot-caption">Everything a manually-created spot has, pre-filled from the import.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>
+    Need something this page doesn't cover? Email <a href="mailto:support@sageoutdoors.app">support@sageoutdoors.app</a>.
+  </footer>
+
 </main>
 
-<footer>
-  <div class="wrap foot">
-    <div class="left">
-      <img src="/assets/sage-wordmark.svg" alt="Sage" />
-      <span class="copy">&copy; 2026 Sage Outdoors</span>
-    </div>
-    <nav class="foot-links">
-      <a href="/help/">Help & How To</a>
-      <a href="/privacy">Privacy</a>
-      <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Terms</a>
-      <a href="mailto:support@sageoutdoors.app">Support</a>
-    </nav>
-  </div>
-</footer>
-
 <script>
-/* Inlined SunCalc (c) 2011-2015 Vladimir Agafonkin, MIT. https://github.com/mourner/suncalc */
-/*
- (c) 2011-2015, Vladimir Agafonkin
- SunCalc is a JavaScript library for calculating sun/moon position and light phases.
- https://github.com/mourner/suncalc
-*/
-
-(function () { 'use strict';
-
-// shortcuts for easier to read formulas
-
-var PI   = Math.PI,
-    sin  = Math.sin,
-    cos  = Math.cos,
-    tan  = Math.tan,
-    asin = Math.asin,
-    atan = Math.atan2,
-    acos = Math.acos,
-    rad  = PI / 180;
-
-// sun calculations are based on http://aa.quae.nl/en/reken/zonpositie.html formulas
-
-
-// date/time constants and conversions
-
-var dayMs = 1000 * 60 * 60 * 24,
-    J1970 = 2440588,
-    J2000 = 2451545;
-
-function toJulian(date) { return date.valueOf() / dayMs - 0.5 + J1970; }
-function fromJulian(j)  { return new Date((j + 0.5 - J1970) * dayMs); }
-function toDays(date)   { return toJulian(date) - J2000; }
-
-
-// general calculations for position
-
-var e = rad * 23.4397; // obliquity of the Earth
-
-function rightAscension(l, b) { return atan(sin(l) * cos(e) - tan(b) * sin(e), cos(l)); }
-function declination(l, b)    { return asin(sin(b) * cos(e) + cos(b) * sin(e) * sin(l)); }
-
-function azimuth(H, phi, dec)  { return atan(sin(H), cos(H) * sin(phi) - tan(dec) * cos(phi)); }
-function altitude(H, phi, dec) { return asin(sin(phi) * sin(dec) + cos(phi) * cos(dec) * cos(H)); }
-
-function siderealTime(d, lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
-
-function astroRefraction(h) {
-    if (h < 0) // the following formula works for positive altitudes only.
-        h = 0; // if h = -0.08901179 a div/0 would occur.
-
-    // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-    // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
-    return 0.0002967 / Math.tan(h + 0.00312536 / (h + 0.08901179));
-}
-
-// general sun calculations
-
-function solarMeanAnomaly(d) { return rad * (357.5291 + 0.98560028 * d); }
-
-function eclipticLongitude(M) {
-
-    var C = rad * (1.9148 * sin(M) + 0.02 * sin(2 * M) + 0.0003 * sin(3 * M)), // equation of center
-        P = rad * 102.9372; // perihelion of the Earth
-
-    return M + C + P + PI;
-}
-
-function sunCoords(d) {
-
-    var M = solarMeanAnomaly(d),
-        L = eclipticLongitude(M);
-
-    return {
-        dec: declination(L, 0),
-        ra: rightAscension(L, 0)
-    };
-}
-
-
-var SunCalc = {};
-
-
-// calculates sun position for a given date and latitude/longitude
-
-SunCalc.getPosition = function (date, lat, lng) {
-
-    var lw  = rad * -lng,
-        phi = rad * lat,
-        d   = toDays(date),
-
-        c  = sunCoords(d),
-        H  = siderealTime(d, lw) - c.ra;
-
-    return {
-        azimuth: azimuth(H, phi, c.dec),
-        altitude: altitude(H, phi, c.dec)
-    };
-};
-
-
-// sun times configuration (angle, morning name, evening name)
-
-var times = SunCalc.times = [
-    [-0.833, 'sunrise',       'sunset'      ],
-    [  -0.3, 'sunriseEnd',    'sunsetStart' ],
-    [    -6, 'dawn',          'dusk'        ],
-    [   -12, 'nauticalDawn',  'nauticalDusk'],
-    [   -18, 'nightEnd',      'night'       ],
-    [     6, 'goldenHourEnd', 'goldenHour'  ]
-];
-
-// adds a custom time to the times config
-
-SunCalc.addTime = function (angle, riseName, setName) {
-    times.push([angle, riseName, setName]);
-};
-
-
-// calculations for sun times
-
-var J0 = 0.0009;
-
-function julianCycle(d, lw) { return Math.round(d - J0 - lw / (2 * PI)); }
-
-function approxTransit(Ht, lw, n) { return J0 + (Ht + lw) / (2 * PI) + n; }
-function solarTransitJ(ds, M, L)  { return J2000 + ds + 0.0053 * sin(M) - 0.0069 * sin(2 * L); }
-
-function hourAngle(h, phi, d) { return acos((sin(h) - sin(phi) * sin(d)) / (cos(phi) * cos(d))); }
-function observerAngle(height) { return -2.076 * Math.sqrt(height) / 60; }
-
-// returns set time for the given sun altitude
-function getSetJ(h, lw, phi, dec, n, M, L) {
-
-    var w = hourAngle(h, phi, dec),
-        a = approxTransit(w, lw, n);
-    return solarTransitJ(a, M, L);
-}
-
-
-// calculates sun times for a given date, latitude/longitude, and, optionally,
-// the observer height (in meters) relative to the horizon
-
-SunCalc.getTimes = function (date, lat, lng, height) {
-
-    height = height || 0;
-
-    var lw = rad * -lng,
-        phi = rad * lat,
-
-        dh = observerAngle(height),
-
-        d = toDays(date),
-        n = julianCycle(d, lw),
-        ds = approxTransit(0, lw, n),
-
-        M = solarMeanAnomaly(ds),
-        L = eclipticLongitude(M),
-        dec = declination(L, 0),
-
-        Jnoon = solarTransitJ(ds, M, L),
-
-        i, len, time, h0, Jset, Jrise;
-
-
-    var result = {
-        solarNoon: fromJulian(Jnoon),
-        nadir: fromJulian(Jnoon - 0.5)
-    };
-
-    for (i = 0, len = times.length; i < len; i += 1) {
-        time = times[i];
-        h0 = (time[0] + dh) * rad;
-
-        Jset = getSetJ(h0, lw, phi, dec, n, M, L);
-        Jrise = Jnoon - (Jset - Jnoon);
-
-        result[time[1]] = fromJulian(Jrise);
-        result[time[2]] = fromJulian(Jset);
-    }
-
-    return result;
-};
-
-
-// moon calculations, based on http://aa.quae.nl/en/reken/hemelpositie.html formulas
-
-function moonCoords(d) { // geocentric ecliptic coordinates of the moon
-
-    var L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
-        M = rad * (134.963 + 13.064993 * d), // mean anomaly
-        F = rad * (93.272 + 13.229350 * d),  // mean distance
-
-        l  = L + rad * 6.289 * sin(M), // longitude
-        b  = rad * 5.128 * sin(F),     // latitude
-        dt = 385001 - 20905 * cos(M);  // distance to the moon in km
-
-    return {
-        ra: rightAscension(l, b),
-        dec: declination(l, b),
-        dist: dt
-    };
-}
-
-SunCalc.getMoonPosition = function (date, lat, lng) {
-
-    var lw  = rad * -lng,
-        phi = rad * lat,
-        d   = toDays(date),
-
-        c = moonCoords(d),
-        H = siderealTime(d, lw) - c.ra,
-        h = altitude(H, phi, c.dec),
-        // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-        pa = atan(sin(H), tan(phi) * cos(c.dec) - sin(c.dec) * cos(H));
-
-    h = h + astroRefraction(h); // altitude correction for refraction
-
-    return {
-        azimuth: azimuth(H, phi, c.dec),
-        altitude: h,
-        distance: c.dist,
-        parallacticAngle: pa
-    };
-};
-
-
-// calculations for illumination parameters of the moon,
-// based on http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro formulas and
-// Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-
-SunCalc.getMoonIllumination = function (date) {
-
-    var d = toDays(date || new Date()),
-        s = sunCoords(d),
-        m = moonCoords(d),
-
-        sdist = 149598000, // distance from Earth to Sun in km
-
-        phi = acos(sin(s.dec) * sin(m.dec) + cos(s.dec) * cos(m.dec) * cos(s.ra - m.ra)),
-        inc = atan(sdist * sin(phi), m.dist - sdist * cos(phi)),
-        angle = atan(cos(s.dec) * sin(s.ra - m.ra), sin(s.dec) * cos(m.dec) -
-                cos(s.dec) * sin(m.dec) * cos(s.ra - m.ra));
-
-    return {
-        fraction: (1 + cos(inc)) / 2,
-        phase: 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI,
-        angle: angle
-    };
-};
-
-
-function hoursLater(date, h) {
-    return new Date(date.valueOf() + h * dayMs / 24);
-}
-
-// calculations for moon rise/set times are based on http://www.stargazing.net/kepler/moonrise.html article
-
-SunCalc.getMoonTimes = function (date, lat, lng, inUTC) {
-    var t = new Date(date);
-    if (inUTC) t.setUTCHours(0, 0, 0, 0);
-    else t.setHours(0, 0, 0, 0);
-
-    var hc = 0.133 * rad,
-        h0 = SunCalc.getMoonPosition(t, lat, lng).altitude - hc,
-        h1, h2, rise, set, a, b, xe, ye, d, roots, x1, x2, dx;
-
-    // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
-    for (var i = 1; i <= 24; i += 2) {
-        h1 = SunCalc.getMoonPosition(hoursLater(t, i), lat, lng).altitude - hc;
-        h2 = SunCalc.getMoonPosition(hoursLater(t, i + 1), lat, lng).altitude - hc;
-
-        a = (h0 + h2) / 2 - h1;
-        b = (h2 - h0) / 2;
-        xe = -b / (2 * a);
-        ye = (a * xe + b) * xe + h1;
-        d = b * b - 4 * a * h1;
-        roots = 0;
-
-        if (d >= 0) {
-            dx = Math.sqrt(d) / (Math.abs(a) * 2);
-            x1 = xe - dx;
-            x2 = xe + dx;
-            if (Math.abs(x1) <= 1) roots++;
-            if (Math.abs(x2) <= 1) roots++;
-            if (x1 < -1) x1 = x2;
-        }
-
-        if (roots === 1) {
-            if (h0 < 0) rise = i + x1;
-            else set = i + x1;
-
-        } else if (roots === 2) {
-            rise = i + (ye < 0 ? x2 : x1);
-            set = i + (ye < 0 ? x1 : x2);
-        }
-
-        if (rise && set) break;
-
-        h0 = h2;
-    }
-
-    var result = {};
-
-    if (rise) result.rise = hoursLater(t, rise);
-    if (set) result.set = hoursLater(t, set);
-
-    if (!rise && !set) result[ye > 0 ? 'alwaysUp' : 'alwaysDown'] = true;
-
-    return result;
-};
-
-
-// export as Node module / AMD module / browser variable
-if (typeof exports === 'object' && typeof module !== 'undefined') module.exports = SunCalc;
-else if (typeof define === 'function' && define.amd) define(SunCalc);
-else window.SunCalc = SunCalc;
-
-}());
-
+  const navLinks = Array.from(document.querySelectorAll('nav.sectionnav a'));
+  const sections = Array.from(document.querySelectorAll('section.doc-section[id]'));
+  const linkFor = id => navLinks.find(a => a.getAttribute('href') === '#' + id);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = linkFor(entry.target.id);
+      if (!link) return;
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('current'));
+        link.classList.add('current');
+        link.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+
+  const navEl = document.querySelector('nav.sectionnav');
+  const arrowLeft = document.getElementById('navArrowLeft');
+  const arrowRight = document.getElementById('navArrowRight');
+  const fadeLeft = document.getElementById('navFadeLeft');
+  const fadeRight = document.getElementById('navFadeRight');
+
+  function updateNavEdges() {
+    const maxScroll = navEl.scrollWidth - navEl.clientWidth;
+    const atStart = navEl.scrollLeft <= 4;
+    const atEnd = navEl.scrollLeft >= maxScroll - 4;
+    arrowLeft.style.display = atStart ? 'none' : 'flex';
+    fadeLeft.style.display = atStart ? 'none' : 'block';
+    arrowRight.style.display = atEnd ? 'none' : 'flex';
+    fadeRight.style.display = atEnd ? 'none' : 'block';
+  }
+
+  arrowLeft.addEventListener('click', () => navEl.scrollBy({ left: -220, behavior: 'smooth' }));
+  arrowRight.addEventListener('click', () => navEl.scrollBy({ left: 220, behavior: 'smooth' }));
+  navEl.addEventListener('scroll', updateNavEdges);
+  window.addEventListener('resize', updateNavEdges);
+  updateNavEdges();
 </script>
-<script>
-  // Scroll reveal
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
-  window.addEventListener('load', () => {
-    document.querySelectorAll('.hero .reveal').forEach((el) => el.classList.add('in'));
-  });
-
-  // ---- Live weather tile (Open-Meteo, keyless; IP geo with precise opt-in) ----
-  const $ = (id) => document.getElementById(id);
-
-  function wxCat(text) {
-    const t = (text || '').toLowerCase();
-    if (t.includes('thunder') || t.includes('storm')) return 'storm';
-    if (t.includes('snow') || t.includes('sleet') || t.includes('flurr') || t.includes('ice')) return 'snow';
-    if (t.includes('rain') || t.includes('shower') || t.includes('drizzle')) return 'rain';
-    if (t.includes('fog') || t.includes('haze') || t.includes('mist') || t.includes('smoke')) return 'fog';
-    if (t.includes('partly') || t.includes('mostly sunny') || t.includes('mostly clear')) return 'partly';
-    if (t.includes('cloud') || t.includes('overcast')) return 'cloudy';
-    if (t.includes('sunny') || t.includes('clear') || t.includes('fair')) return 'clear';
-    return 'cloudy';
-  }
-
-  function iconSVG(cat) {
-    const open = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">';
-    const cloud = '<path d="M7 16h10a3.5 3.5 0 0 0 .5-6.96A5 5 0 0 0 8 10.2 3.5 3.5 0 0 0 7 16z"/>';
-    const icons = {
-      clear: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>',
-      partly: '<circle cx="9" cy="8" r="3"/><path d="M9 2.5V4M4.2 4.2l1 1M2.5 9H4M15.5 9H14"/><path d="M9 19h8a3 3 0 0 0 .4-5.97A4.2 4.2 0 0 0 9.5 12 3 3 0 0 0 9 19z"/>',
-      cloudy: cloud,
-      fog: cloud + '<path d="M5 19h14M7 21.5h10"/>',
-      rain: cloud + '<path d="M8 18l-1 2.5M12 18l-1 2.5M16 18l-1 2.5"/>',
-      snow: cloud + '<path d="M8 19h.01M12 20h.01M16 19h.01M10 21h.01M14 21h.01"/>',
-      storm: cloud + '<path d="M12 17l-2 4h3l-2 4"/>'
-    };
-    return open + (icons[cat] || cloud) + '</svg>';
-  }
-
-  function moonPhaseName(p) {
-    if (p < 0.0625 || p >= 0.9375) return 'New Moon';
-    if (p < 0.1875) return 'Waxing Crescent';
-    if (p < 0.3125) return 'First Quarter';
-    if (p < 0.4375) return 'Waxing Gibbous';
-    if (p < 0.5625) return 'Full Moon';
-    if (p < 0.6875) return 'Waning Gibbous';
-    if (p < 0.8125) return 'Last Quarter';
-    return 'Waning Crescent';
-  }
-  function moonGlyph(fraction, waxing) {
-    var size = 38, r = size / 2, cx = r, cy = r, rr = r - 0.5;
-    var absRx = (rr * Math.abs(1 - 2 * fraction)).toFixed(2);
-    var gibbous = fraction > 0.5;
-    var outerSweep = waxing ? 1 : 0;
-    var termSweep = waxing ? (gibbous ? 1 : 0) : (gibbous ? 0 : 1);
-    var lit = 'M ' + cx + ',' + (cy - rr) +
-      ' A ' + rr + ',' + rr + ' 0 0 ' + outerSweep + ' ' + cx + ',' + (cy + rr) +
-      ' A ' + absRx + ',' + rr + ' 0 0 ' + termSweep + ' ' + cx + ',' + (cy - rr) + ' Z';
-    return '<svg viewBox="0 0 ' + size + ' ' + size + '">' +
-      '<circle cx="' + cx + '" cy="' + cy + '" r="' + rr + '" fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>' +
-      '<path d="' + lit + '" fill="#ffffff"/></svg>';
-  }
-  function fmtTime(d) {
-    if (!d) return '\u2014';
-    try { return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); } catch (e) { return '\u2014'; }
-  }
-  function renderMoon(date, lat, lon) {
-    if (typeof SunCalc === 'undefined') return;
-    var ill = SunCalc.getMoonIllumination(date);
-    var waxing = ill.phase < 0.5;
-    $('moonGlyph').innerHTML = moonGlyph(ill.fraction, waxing);
-    $('moonName').textContent = moonPhaseName(ill.phase) + ' \u00B7 ' + Math.round(ill.fraction * 100) + '% lit';
-    var sub = '\u2014';
-    if (isFinite(lat) && isFinite(lon)) {
-      var t = SunCalc.getMoonTimes(date, lat, lon);
-      var parts = [];
-      if (t.rise) parts.push('Rise ' + fmtTime(t.rise));
-      if (t.set) parts.push('Set ' + fmtTime(t.set));
-      if (parts.length) sub = parts.join('  \u00B7  ');
-      else if (t.alwaysUp) sub = 'Up all day';
-      else if (t.alwaysDown) sub = 'Down all day';
-    }
-    $('moonSub').textContent = sub;
-  }
-  function render(c, label) {
-    $('wxLoc').textContent = label;
-    $('wxIcon').innerHTML = iconSVG(wxCat(c.shortForecast));
-    $('wxTemp').innerHTML = Math.round(c.temperature) + '<span class="deg">\u00B0' + (c.temperatureUnit || 'F') + '</span>';
-    $('wxCond').textContent = c.shortForecast || '\u2014';
-    const wind = (c.windDirection ? c.windDirection + ' ' : '') + (c.windSpeed || '\u2014');
-    const hum = (c.relativeHumidity && c.relativeHumidity.value != null) ? Math.round(c.relativeHumidity.value) + '%' : '\u2014';
-    const pop = (c.probabilityOfPrecipitation && c.probabilityOfPrecipitation.value != null) ? Math.round(c.probabilityOfPrecipitation.value) + '%' : '0%';
-    $('wxStats').innerHTML =
-      '<div class="wx-stat"><span class="k">Wind</span><span class="v">' + wind + '</span></div>' +
-      '<div class="wx-stat"><span class="k">Humidity</span><span class="v">' + hum + '</span></div>' +
-      '<div class="wx-stat"><span class="k">Precip</span><span class="v">' + pop + '</span></div>';
-    $('wxSource').textContent = 'NWS \u00B7 live';
-  }
-
-  function fallback() {
-    $('wxLoc').textContent = 'Your area';
-    $('wxCond').textContent = 'Tap "Use exact location" to load.';
-    $('wxSource').textContent = 'Location unavailable';
-  }
-
-  async function loadWx(lat, lon, label) {
-    // NWS requires <=4 decimal places on the points endpoint
-    const pt = await fetch('https://api.weather.gov/points/' + lat.toFixed(4) + ',' + lon.toFixed(4),
-      { headers: { 'Accept': 'application/geo+json' } });
-    if (!pt.ok) throw new Error('points');
-    const pj = await pt.json();
-    const hourlyUrl = pj.properties && pj.properties.forecastHourly;
-    if (!hourlyUrl) throw new Error('no-hourly');
-    const rl = pj.properties.relativeLocation && pj.properties.relativeLocation.properties;
-    const nwsLabel = rl ? [rl.city, rl.state].filter(Boolean).join(', ') : null;
-    const h = await fetch(hourlyUrl, { headers: { 'Accept': 'application/geo+json' } });
-    if (!h.ok) throw new Error('hourly');
-    const hj = await h.json();
-    const cur = hj.properties && hj.properties.periods && hj.properties.periods[0];
-    if (!cur) throw new Error('no-period');
-    render(cur, nwsLabel || label);
-  }
-
-  async function init() {
-    try {
-      const r = await fetch('https://get.geojs.io/v1/ip/geo.json');
-      if (!r.ok) throw new Error('geo');
-      const g = await r.json();
-      const lat = parseFloat(g.latitude), lon = parseFloat(g.longitude);
-      if (!isFinite(lat) || !isFinite(lon)) throw new Error('geo-bad');
-      renderMoon(new Date(), lat, lon);
-      const label = [g.city, g.region].filter(Boolean).join(', ') || 'Near you';
-      await loadWx(lat, lon, label);
-    } catch (e) {
-      fallback();
-    }
-  }
-
-  $('wxPrecise').addEventListener('click', () => {
-    if (!navigator.geolocation) return;
-    const prev = $('wxCond').textContent;
-    $('wxCond').textContent = 'Getting your location\u2026';
-    navigator.geolocation.getCurrentPosition(
-      (p) => { renderMoon(new Date(), p.coords.latitude, p.coords.longitude); loadWx(p.coords.latitude, p.coords.longitude, 'Your location').catch(fallback); },
-      () => { $('wxCond').textContent = prev; }
-    );
-  });
-
-  renderMoon(new Date(), NaN, NaN);
-  init();
-</script>
-<!-- Cloudflare Web Analytics — replace 964783d5e7c34290b690268ef7abd596 with the token from your beacon snippet -->
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "964783d5e7c34290b690268ef7abd596"}'></script>
-<!-- End Cloudflare Web Analytics -->
 
 </body>
 </html>
