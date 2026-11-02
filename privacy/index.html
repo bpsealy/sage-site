@@ -56,36 +56,55 @@
 
 <main>
   <h1>Privacy Policy for Sage</h1>
-  <p class="updated">Last updated: April 28, 2026</p>
+  <p class="updated">Last updated: November 2, 2026</p>
 
-  <p>Sage ("the app") is a weather application for hunting and fishing planning. This privacy policy explains what information the app accesses and how it is used.</p>
+  <p>Sage ("the app") is a weather and planning app for hunting and fishing. This privacy policy explains what information the app accesses, where it goes, and how it is used.</p>
 
   <h2>Location Data</h2>
-  <p>The app accesses your device's location to provide weather forecasts, sunrise/sunset times, solunar tables, and other location-dependent information for your current position. Location data is processed on your device and sent to third-party weather services (listed below) solely to retrieve forecast data for your coordinates. Location data is not stored on any server operated by the developer, is not associated with your identity, and is not used for advertising or tracking.</p>
-  <p>You may revoke location access at any time in your device's Settings. Without location access, you can still use the app by manually searching for or selecting saved locations.</p>
+  <p>The app accesses your device's location to provide weather forecasts, sunrise and sunset times, solunar tables, and other information for your current position. Your coordinates are sent to the services listed below solely to retrieve data for that location. Your device's live location is not stored on any server operated by the developer, is not associated with your identity, and is not used for advertising or tracking.</p>
+  <p>You may revoke location access at any time in your device's Settings. Without location access, you can still use the app by searching for or selecting saved locations.</p>
 
-  <h2>Data Stored on Your Device</h2>
-  <p>The app stores the following information locally on your device only:</p>
+  <h2>Your Data and iCloud</h2>
+  <p>The app stores the following information on your device:</p>
   <ul>
     <li>Saved locations you choose to add</li>
-    <li>Hunting and fishing spots you create</li>
+    <li>Properties, hunting spots, and fishing spots you create</li>
     <li>Logbook entries (trip details, ratings, notes, weather snapshots, water condition snapshots)</li>
-    <li>Photos you attach to logbook entries or spots</li>
+    <li>Sightings and target bucks you track</li>
+    <li>Photos you attach to entries, spots, or sightings, including trail camera photos you import</li>
     <li>App preferences</li>
   </ul>
-  <p>This information is not transmitted off your device. It is not backed up by the developer, not shared with third parties, and is removed when you delete the app.</p>
+  <p>If you are signed in to iCloud, this data is also synced to your private iCloud account using Apple's CloudKit, so it is available on your other devices. Data in your private iCloud account is stored by Apple and cannot be accessed by the developer. You can manage or delete it in your device's iCloud settings. Data stored only on your device is removed when you delete the app.</p>
+
+  <h2>Camps</h2>
+  <p>If you create or join a Camp, the spots, hunt logs, sightings, target bucks, and stand reservations added to that Camp are shared through iCloud with the members of that Camp, along with each member's display name. Camps are invite only and are never public. Camp data is stored in the Camp owner's iCloud account and cannot be accessed by the developer. The Camp owner can remove members at any time.</p>
+
+  <h2>Notifications</h2>
+  <p><strong>Camp notifications.</strong> Camp activity notifications are delivered through Apple's iCloud and Push Notification services. Sage does not send Camp data to any other server.</p>
+  <p><strong>Weather alerts.</strong> If you turn on weather alerts, the app sends your device's push notification token, the locations you choose to receive alerts for, and the alert types you select to a server operated by the developer. The server uses this information only to check National Weather Service alerts and NOAA radar for those locations and to send matching alerts, such as approaching rain, to your device through Apple's Push Notification service. Weather alerts use only the locations you save in the app, not your device's live location.</p>
+  <p>This information is not linked to your name, email address, or Apple ID. It is not sold, shared with third parties, or used for advertising or tracking. It is kept only while weather alerts are on. If you turn weather alerts off or remove all of your alert locations, the app tells the server to delete your registration.</p>
+
+  <h2>Wind Map</h2>
+  <p>When you open the wind map, the app sends the boundaries of the map area on screen to a server operated by the developer, which returns National Weather Service wind forecasts for that area. No device identifier, name, or account is sent with this request, and the server does not keep a record of the areas requested.</p>
 
   <h2>Third-Party Services</h2>
-  <p>The app retrieves data from the following public weather and environmental services. When the app makes a request to one of these services, your approximate coordinates are sent to that service so it can return forecast data for your location. The developer does not control these services and is not responsible for their privacy practices.</p>
+  <p>The app retrieves data from the following weather, mapping, and environmental services. When the app makes a request to one of these services, it sends the coordinates of your current location, or of the saved location, spot, or map area you are viewing, so the service can return data for that place. No name, account, or other identifier is sent with these requests. The developer does not control these services and is not responsible for their privacy practices.</p>
   <ul>
-    <li>Open-Meteo (open-meteo.com) — weather forecast data</li>
-    <li>National Oceanic and Atmospheric Administration / National Weather Service (weather.gov) — weather alerts</li>
-    <li>NOAA Tides and Currents (tidesandcurrents.noaa.gov) — tide predictions</li>
-    <li>United States Geological Survey Water Services (waterservices.usgs.gov) — river and dam flow data</li>
+    <li>Apple WeatherKit: weather forecasts, current conditions, and next-hour precipitation</li>
+    <li>Apple Maps: location search, place names, and map images</li>
+    <li>National Oceanic and Atmospheric Administration / National Weather Service (weather.gov, noaa.gov): weather alerts, weather station observations, radar, and soil temperature</li>
+    <li>Iowa Environmental Mesonet (mesonet.agron.iastate.edu): weather station observations and rainfall totals</li>
+    <li>USDA Natural Resources Conservation Service (wcc.sc.egov.usda.gov): soil temperature</li>
+    <li>U.S. Geological Survey (usgs.gov): river and dam flow data and elevation</li>
+    <li>NOAA Tides and Currents (tidesandcurrents.noaa.gov): tide predictions</li>
+    <li>Mapbox (mapbox.com): maps. The Mapbox SDK built into the app may also collect anonymous usage, performance, diagnostic, and location data to operate and improve its service. This data is not linked to your identity or used for tracking. See <a href="https://www.mapbox.com/legal/privacy">Mapbox's privacy policy</a>.</li>
   </ul>
 
+  <h2>Subscriptions</h2>
+  <p>Purchases and subscriptions are processed by Apple through the App Store. The developer does not receive your payment information.</p>
+
   <h2>Analytics and Tracking</h2>
-  <p>The app does not collect analytics, does not use advertising frameworks, and does not track users across apps or websites.</p>
+  <p>The app does not include any advertising frameworks and does not track you across apps or websites. The developer does not use any analytics service in the app. The Mapbox mapping SDK collects its own anonymous usage and diagnostic data, as described under Third-Party Services. If you choose to share analytics with app developers in your device's settings, Apple may provide the developer with crash reports and aggregated usage information. This information is not linked to your identity.</p>
 
   <h2>Children</h2>
   <p>The app is not directed at children under 13. The app does not knowingly collect information from children.</p>
@@ -94,7 +113,8 @@
   <p>This policy may be updated as the app evolves. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
 
   <h2>Contact</h2>
-  <p>Questions or concerns about this privacy policy: <a href="mailto:support@sageoutdoors.app">support@sageoutdoors.app</a></p>
+  <p>Questions or concerns about this privacy policy:<br>
+  <a href="mailto:support@sageoutdoors.app">support@sageoutdoors.app</a></p>
 </main>
 
 <footer>
